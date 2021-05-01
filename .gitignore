@@ -2,5 +2,9 @@
 *.d
 *.o
 *.crf
+*.axf
 *.htm
+*.map
 *.George
+*.lst
+*.lnp
