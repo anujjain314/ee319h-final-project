@@ -8,3 +8,6 @@
 *.George
 *.lst
 *.lnp
+*.dep
+*.bak
+*.sct
