@@ -1,11 +1,10 @@
-#ignore all kind of files
-*
-#except these files
-!.gitignore
-!*.cpp
-!*.hpp
-!*.h
-!*.c
-!*.s
-
-RTE/_Lab_10/RTE_Components.h
+#ignore these files
+*.d
+*.o
+*.crf
+*.axf
+*.htm
+*.map
+*.George
+*.lst
+*.lnp
