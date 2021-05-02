@@ -55,6 +55,7 @@
 #include "Timer1.h"
 #include "Timer2.h"
 #include "Ship.h"
+#include "laser.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -91,7 +92,8 @@ void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
 
 // Test Player Class
-int main(void){ Switch s; Ship player(6000, 3800);
+int main(void){ Switch s; Ship player(6000, 3800); Laser l[10];
+	uint8_t numLazers = 0;
 	PLL_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	while(true){
@@ -108,7 +110,18 @@ int main(void){ Switch s; Ship player(6000, 3800);
 		} else{
 			player.setAcceleration(0);
 		}
-			player.Move();
+		if(s.down_Pressed()){
+			if(numLazers == 10){
+				numLazers = 0;
+			}
+			numLazers++;
+			player.fire(l[numLazers-1]);
+		}
+		for(uint8_t i = 0; i < numLazers; i++){
+			l[i].move();
+			l[i].draw();
+		}
+			player.move();
 			player.draw();
 		  SSD1306_OutBuffer();
 	}
