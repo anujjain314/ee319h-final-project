@@ -10,12 +10,21 @@ void Laser::instantiate(int16_t x, int16_t y, uint8_t dir){
 	this->x = x;
 	this->y = y;
 	this->dir = dir;
-	uint8_t i = dirToIndex(NUM_DIRECTIONS);
-	vx = cos[i] * LASER_SPEED;
-	vy = sin[i] * LASER_SPEED;
-	numSprites = 8;
-	sprites = laserSpriteList;
+	deathCounter = LASER_LIFETIME;
+	Trig::setComponents(&vx,&vy, LASER_SPEED, dir);
 }
 
 Laser::Laser() : Object(0,0,0,0){
+}
+
+const uint8_t* Laser::defaultAnimation(){
+	// destroy the object after LASER_LIMETIME calls to this function
+	deathCounter--;
+	if(deathCounter == 0){
+		destroy();
+		return NULL; // destroyed object shouldnt be visible
+	}
+	
+	uint8_t i = Utility::toIndex(dir, 255, 8); //default sprite is based on the direction the laser is moving
+	return laserSpriteList[i];
 }

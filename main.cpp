@@ -56,6 +56,7 @@
 #include "Timer2.h"
 #include "Ship.h"
 #include "laser.h"
+#include "vector.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -90,9 +91,86 @@ extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
+// Test Player Class
+int main(void){ Switch s; Ship player(6000, 3800); vector<Laser> v(10);
+	PLL_Init();
+	SSD1306_Init(SSD1306_SWITCHCAPVCC);
+	while(true){
+		SSD1306_ClearBuffer();
+		Delay100ms(1);
+		if(s.left_Pressed()){
+			player.turn(-20);
+		} 
+		else if(s.right_Pressed()){
+			player.turn(20);
+		}
+		if(s.up_Pressed()){
+			player.setAcceleration(200);
+		} else{
+			player.setAcceleration(0);
+		}
+		if(s.down_Pressed()){
+			if(!v.isFull()){
+				v.push_back(Laser());
+				player.fire(v.back());
+			}
+		}
+		for(uint8_t i = 0; i < v.len(); i++){
+			if(v[i].isDestoyed()){
+				v.remove(i);
+			}
+			v[i].move();
+			v[i].draw();
+		}
+			player.move();
+			player.draw();
+		  SSD1306_OutBuffer();
+	}
+}
+
 
 // Test Player Class
-int main(void){ Switch s; Ship player(6000, 3800); Laser l[10];
+int main4(void){ Switch s; Ship player(6000, 3800); Laser *l[10];
+	uint8_t numLazers = 0;
+	PLL_Init();
+	SSD1306_Init(SSD1306_SWITCHCAPVCC);
+	while(true){
+		SSD1306_ClearBuffer();
+		Delay100ms(1);
+		if(s.left_Pressed()){
+			player.turn(-20);
+		} 
+		else if(s.right_Pressed()){
+			player.turn(20);
+		}
+		if(s.up_Pressed()){
+			player.setAcceleration(200);
+		} else{
+			player.setAcceleration(0);
+		}
+		if(s.down_Pressed()){
+			if(numLazers == 10){
+				for(uint8_t i = 0; i < numLazers; i++){
+					delete l[i];
+				}
+				numLazers = 0;
+			}
+			numLazers++;
+			l[numLazers-1] = new Laser();
+			player.fire(*l[numLazers-1]);
+		}
+		for(uint8_t i = 0; i < numLazers; i++){
+			l[i]->move();
+			l[i]->draw();
+		}
+			player.move();
+			player.draw();
+		  SSD1306_OutBuffer();
+	}
+}
+
+// Test Player Class
+int main3(void){ Switch s; Ship player(6000, 3800); Laser l[10];
 	uint8_t numLazers = 0;
 	PLL_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
@@ -126,7 +204,6 @@ int main(void){ Switch s; Ship player(6000, 3800); Laser l[10];
 		  SSD1306_OutBuffer();
 	}
 }
-
 
 // Test Switch Class
 int main2(void){uint8_t prev; uint8_t curr; Switch s; uint8_t count;
