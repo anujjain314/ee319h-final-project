@@ -54,6 +54,7 @@
 #include "Timer0.h"
 #include "Timer1.h"
 #include "Timer2.h"
+#include "Ship.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -89,10 +90,33 @@ extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
 
-Switch s;
+// Test Player Class
+int main(void){ Switch s; Ship player(6000, 3800);
+	PLL_Init();
+	SSD1306_Init(SSD1306_SWITCHCAPVCC);
+	while(true){
+		SSD1306_ClearBuffer();
+		Delay100ms(1);
+		if(s.left_Pressed()){
+			player.turn(-20);
+		} 
+		else if(s.right_Pressed()){
+			player.turn(20);
+		}
+		if(s.up_Pressed()){
+			player.setAcceleration(200);
+		} else{
+			player.setAcceleration(0);
+		}
+			player.Move();
+			player.draw();
+		  SSD1306_OutBuffer();
+	}
+}
 
-uint8_t count;
-int main(void){uint8_t prev; uint8_t curr;
+
+// Test Switch Class
+int main2(void){uint8_t prev; uint8_t curr; Switch s; uint8_t count;
 	while(true){
 		curr = s.up_Pressed() || s.down_Pressed() || s.left_Pressed() || s.right_Pressed();
 		if(curr != prev)
@@ -100,12 +124,6 @@ int main(void){uint8_t prev; uint8_t curr;
 		prev = curr;
 	}
 }
-
-
-
-
-
-
 
 
 int main1(void){uint32_t time=0;
@@ -153,11 +171,12 @@ int main1(void){uint32_t time=0;
   }
 }
 
+
 // You can't use this timer, it is here for starter code only 
 // you must use interrupts to perform delays
 void Delay100ms(uint32_t count){uint32_t volatile time;
   while(count>0){
-    time = 727240;  // 0.1sec at 80 MHz
+    time = 727240/2;  // 0.1sec at 80 MHz
     while(time){
       time--;
     }
