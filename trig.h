@@ -11,6 +11,7 @@
 class Trig{
 	public:
 		static void setComponents(int16_t*x, int16_t*y, int16_t magnitude, uint8_t direction); // sets x and y components of vector based on magnitude and direction
+	  static int32_t getDistance(int32_t x1, int32_t x2, int32_t y1, int32_t y2); // returns approximate distance between two points
 };
 
 #endif

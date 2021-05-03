@@ -10,7 +10,7 @@
       <TargetName>Lab 10</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
+      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -448,6 +448,46 @@
               <FileType>8</FileType>
               <FilePath>.\Switch.cpp</FilePath>
             </File>
+            <File>
+              <FileName>Ship.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Ship.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Laser.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Laser.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Object.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Object.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>trig.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\trig.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Utility.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\Utility.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>vector.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\vector.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>asteroid.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\asteroid.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>asteroid.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\asteroid.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -469,5 +509,14 @@
     </components>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>Lab10_C++</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>

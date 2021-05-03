@@ -22,20 +22,65 @@ Switch::Switch(){
 	GPIO_PORTE_PDR_R |= 0x0F;		// enable Pull-down resistors on PE0-PE3
 }
 
-bool Switch::down_Pressed(){
+// get status of buttons, don't update previous values
+bool up(){
+	return PE3 >> 3;
+}
+
+bool down(){
 	return PE0;
 }
 
-bool Switch::left_Pressed(){
+bool left(){
 	return PE1 >> 1;
 }
 
-bool Switch::right_Pressed(){
+bool right(){
 	return PE2 >> 2;
 }
 
+// get status of buttons, update previous values
+bool Switch::down_Pressed(){
+	downPrevious = down();
+	return downPrevious;
+}
+
+bool Switch::left_Pressed(){
+	leftPrevious = left();
+	return leftPrevious;
+}
+
+bool Switch::right_Pressed(){
+	rightPrevious = right();
+	return rightPrevious;
+}
+
 bool Switch::up_Pressed(){
-	return PE3 >> 3;
+	upPrevious = up();
+	return upPrevious;
+}
+
+// return true if button was pressed after not being pressed, update previous values
+bool switchClicked(bool current, bool *previous){
+	bool clicked = current && !(*previous);
+	*previous = current;
+	return clicked;
+}
+
+bool Switch::up_Clicked(){
+	return switchClicked(up(), &upPrevious);
+}
+
+bool Switch::down_Clicked(){
+	return switchClicked(down(), &downPrevious);
+}
+
+bool Switch::left_Clicked(){
+	return switchClicked(left(), &leftPrevious);
+}
+
+bool Switch::right_Clicked(){
+	return switchClicked(right(), &rightPrevious);
 }
 
 

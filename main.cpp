@@ -57,6 +57,7 @@
 #include "Ship.h"
 #include "laser.h"
 #include "vector.h"
+#include "asteroid.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -91,10 +92,12 @@ extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
-// Test Player Class
-int main(void){ Switch s; Ship player(6000, 3800); vector<Laser> v(10);
+// Test Player Class, Laser Class, Asteroid Class, dont try to understand this spaghetti code, random testing
+int main(void){ Switch s; Ship player(6000, 3800); vector<Laser> v(10); vector<asteroid> v2(10);
 	PLL_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
+	v2.push_back(asteroid(2000,2000, 47, 20, asteroid_small));
+	v2.push_back(asteroid(4000,2000, 157, 10, asteroid_large));
 	while(true){
 		SSD1306_ClearBuffer();
 		Delay100ms(1);
@@ -109,19 +112,41 @@ int main(void){ Switch s; Ship player(6000, 3800); vector<Laser> v(10);
 		} else{
 			player.setAcceleration(0);
 		}
-		if(s.down_Pressed()){
+		if(s.down_Clicked()){
 			if(!v.isFull()){
 				v.push_back(Laser());
 				player.fire(v.back());
 			}
 		}
 		for(uint8_t i = 0; i < v.len(); i++){
+			
+			for(int j = 0; j < v2.len(); j++){
+				if(v[i].isColliding(v2[j])){
+					v2[j].destroy();
+					v[i].destroy();
+				}
+			}
+			
 			if(v[i].isDestoyed()){
 				v.remove(i);
 			}
 			v[i].move();
 			v[i].draw();
 		}
+		
+		for(uint8_t i = 0; i < v2.len(); i++){
+			if(v2[i].isDestoyed()){
+				v2.remove(i);
+			}
+			
+			if(v2[i].isColliding(player)){
+				player.destroy();
+			}
+			
+			v2[i].move();
+			v2[i].draw();
+		}
+		
 			player.move();
 			player.draw();
 		  SSD1306_OutBuffer();
@@ -266,8 +291,8 @@ int main1(void){uint32_t time=0;
 // you must use interrupts to perform delays
 void Delay100ms(uint32_t count){uint32_t volatile time;
   while(count>0){
-    time = 727240/2;  // 0.1sec at 80 MHz
-    while(time){
+    time = 727240/2;  // 0.1sec at 80 MHz 
+    while(time){   
       time--;
     }
     count--;

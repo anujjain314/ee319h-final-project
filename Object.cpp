@@ -5,6 +5,7 @@ Object::Object(int16_t x, int16_t y, int16_t vx, int16_t vy){
 	this->y = y;
 	this->vx = vx;
 	this->vy = vy;
+	size = 1000; // default size 10 pixels;
 	animation = NULL;
 	maxV = 32767;
 	ax = 0;
@@ -61,6 +62,36 @@ bool Object::isDestoyed(){
 
 void Object::destroy(){
 	destroyed = true;
+}
+
+int16_t Object::getX(){
+	return x;
+}
+
+int16_t Object::getY(){
+	return y;
+}
+
+int16_t Object::getSize(){
+	return size;
+}
+
+bool Object::isColliding(Object &other){
+	int16_t xCenterOther = other.getX() + other.getSize()/2; 	//get x and y position of the center of both objects
+	int16_t yCenterOther = other.getY() - other.getSize()/2;
+	int16_t xCenterThis = this->x + this->size/2;
+	int16_t yCenterThis = this->y - this->size/2;
+	
+	int16_t distance = Trig::getDistance(xCenterOther, xCenterThis, yCenterOther, yCenterThis); //get distances between centers
+	
+	return (distance < (other.getSize()/2 + this->size/2)); // collision if distance between centers is less than half the sum of the objects' sizes
+}
+
+void Object::getCollisions(vector<Object> &others, vector<Object> &collisions){
+	for(uint8_t i = 0; i < others.len(); i++){
+		if(isColliding(others[i]))
+			collisions.push_back(others[i]);
+	}
 }
 
 void Object::setAnimation(const uint8_t **anim, uint8_t fps, uint8_t numFrames){

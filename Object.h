@@ -5,6 +5,7 @@
 #include "Images.h"
 #include "trig.h"
 #include "Utility.h"
+#include "vector.h"
 
 // Min and Max values for position and velocity
 #define MAX_X 12000
@@ -25,6 +26,7 @@ class Object {
 		int16_t maxV; //max velocity
 		int16_t ax; //x-acceleration
 		int16_t ay; //y-acceleration
+	  int16_t size; //size in 0.01 pixels, used for collision calculations
 		//direction - Ranges from 0 to 255, where 0 is right, 64 is Down, 128 is left, 192 is up
 		uint16_t dir;
 		bool destroyed;
@@ -42,8 +44,13 @@ class Object {
 		void setAcceleration(int16_t a); // sets the acceleration in the current direction (units of a is pixels/s^2)
 		// sets the current animation to anim, if anim is null, sets to default animations of object; fps is the frame rate of the animation (max of FRAME_RATE)
 		// numFrames is the length of the animation array
+		int16_t getX();    // returns x position
+		int16_t getY();    // returns y position
+	  int16_t getSize();   // returns size
 		bool isDestoyed(); // returns true if the object is destoyed
 	  void destroy();    // destroys the object
+	  bool isColliding(Object &other); // returns true if this object is colliding with the other object
+		void getCollisions(vector<Object> &others, vector<Object> &collisions); //adds all objects in others vector that collide with this object to the collisions vector
 		void setAnimation(const uint8_t **anim, uint8_t fps, uint8_t numFrames);
 		void draw(); // draws the object on the SSD_1306
 };

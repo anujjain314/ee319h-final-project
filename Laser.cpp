@@ -10,11 +10,9 @@ void Laser::instantiate(int16_t x, int16_t y, uint8_t dir){
 	this->x = x;
 	this->y = y;
 	this->dir = dir;
+	size = LASER_SIZE;
 	deathCounter = LASER_LIFETIME;
 	Trig::setComponents(&vx,&vy, LASER_SPEED, dir);
-}
-
-Laser::Laser() : Object(0,0,0,0){
 }
 
 const uint8_t* Laser::defaultAnimation(){
