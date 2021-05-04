@@ -76,6 +76,14 @@ int16_t Object::getSize(){
 	return size;
 }
 
+int16_t Object::getVelocity() {
+	return Utility::sqrt(getMagnitude(vx, vy));
+}
+
+int16_t Object::getDirection() {
+	return dir;
+}
+
 bool Object::isColliding(Object &other){
 	if(destroyed || other.isDestoyed()){ // destroyed objects cannot collide with one another
 		return false;

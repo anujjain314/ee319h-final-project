@@ -103,6 +103,13 @@ void handleCollisions(vector<Object*> &objs){
 		for(uint8_t j = i + 1; j < objs.len(); j++){
 			if(objs[i]->isColliding(*objs[j])){
 				if(checkTypes(ASTEROID_TYPE, LASER_TYPE, objs[i], objs[j])){ // ASTEROID-LASER collisions
+						if (objs[i]->getType() == ASTEROID_TYPE) {
+							static_cast<asteroid*>(objs[i])->breakDown(objs);
+							}
+						else {
+							static_cast<asteroid*>(objs[j])->breakDown(objs);
+						}
+//					dynamic_cast<asteroid*>(objs[i])->breakDown(objs);
 					objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
 					objs[i]->destroy();
 					objs[j]->destroy();

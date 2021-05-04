@@ -21,10 +21,23 @@ int32_t Utility::getSign(int32_t x){
 		return 1;
 	else if(x < 0)
 		return -1;
-	 else 
+	 else
 		return 0;
 }
 
 int32_t Utility::sameSign(int32_t x, int32_t y){
 	return getSign(x) == getSign(y);
+}
+
+int32_t Utility::sqrt(int32_t value) {
+	float estimate, sqrt;
+	int square = value;
+	sqrt = square / 2;
+	estimate = 0;
+
+	while(sqrt != estimate) {
+		estimate = sqrt;
+		sqrt = (square / estimate + estimate) / 2;
+	}
+	return sqrt;
 }
