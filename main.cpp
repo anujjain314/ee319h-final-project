@@ -87,30 +87,51 @@ void Profile_Init(void){
 }
 //********************************************************************************
  
-
+Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> objs(10);
 extern "C" void DisableInterrupts(void);
 extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
-void removeAndDestroy(vector<Object*> &v, uint8_t i, uint8_t j){ // removes and destroyed objects at indices i and j
-	v[j]->destroy();
-	v[i]->destroy();
-	v.remove(i);
-	v.remove(j);
-}
-
-void removeAndDestroy(vector<Object*> &v, uint8_t i){ // removes and destroyed object at indices i
-	v[i]->destroy();
-	v.remove(i);
-}
-
-bool collisionBetween(int16_t type1, int16_t type2, Object* o1, Object* o2){
+// returns true if one of the objects is either type1 or type2 and the other object is the other type
+bool checkTypes(int16_t type1, int16_t type2, Object* o1, Object* o2){
 	return (o1->getType() == type1 && o2->getType() == type2) || (o1->getType() == type2 && o2->getType() == type1);
 }
 
+// Handles All Collisons between objects in an object* vector
+void handleCollisions(vector<Object*> &objs){
+	for(uint8_t i = 0; i < objs.len(); i++){
+		for(uint8_t j = i + 1; j < objs.len(); j++){
+			if(objs[i]->isColliding(*objs[j])){
+				if(checkTypes(ASTEROID_TYPE, LASER_TYPE, objs[i], objs[j])){ // ASTEROID-LASER collisions
+					objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
+					objs[i]->destroy();
+					objs[j]->destroy();
+					//Add method to break up large asteroids, add explosion
+				} else if(checkTypes(ASTEROID_TYPE, SHIP_TYPE, objs[i], objs[j])){ // ASTEROID-SHIP collisions
+					objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
+					objs[i]->destroy();
+					objs[j]->destroy();
+					// Game Over or Whatever
+				}
+			}
+		}
+	}
+}
+
+// Removes all destroyed objects from an object* vector
+void removeDestroyed(vector<Object*> &objs){
+	for(uint8_t i = 0; i < objs.len(); i++){
+		if(objs[i]->isDestoyed()){
+			delete objs[i];
+			objs.remove(i);
+			i--;
+		}
+	}
+}
+
 // Polymorphism Test
-int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> objs(10);
+int main(void){
 	PLL_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
@@ -124,7 +145,7 @@ int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> o
 		if(s.left_Pressed()){
 			player->turn(-20);
 		} 
-		else if(s.right_Pressed()){
+		if(s.right_Pressed()){
 			player->turn(20);
 		}
 		if(s.up_Pressed()){
@@ -133,36 +154,21 @@ int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> o
 			player->setAcceleration(0);
 		}
 		if(s.down_Clicked()){
-			if(objs.push_back(new Laser())){
-				player->fire(*static_cast<Laser*>(objs.back()));
+			Laser *l = new Laser();
+			if(objs.push_back(l)){
+				player->fire(*l);
+			} else {
+				delete l;
 			}
 		}
 		
 		// Handle Objects
+		handleCollisions(objs);
+		removeDestroyed(objs);
+		// Move and draw all objects
 		for(uint8_t i = 0; i < objs.len(); i++){
-			// Handle All Collisons
-			for(int j = 0; j < objs.len(); j++){
-				if(i != j && objs[i]->isColliding(*objs[j])){
-					if(collisionBetween(ASTEROID_TYPE, LASER_TYPE, objs[i], objs[j])){
-						objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
-						removeAndDestroy(objs, i, j);
-						//Add method to break up large asteroids, add explosion
-					} else if(collisionBetween(ASTEROID_TYPE, SHIP_TYPE, objs[i], objs[j])){
-						objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
-						removeAndDestroy(objs, i, j);
-						// Game Over or Whatever
-					}
-				}
-			}
-			
-			// remove destroyed objects from vector
-			if(objs[i]->isDestoyed()){
-				delete objs[i];
-				objs.remove(i);
-			}
-			// move and draw all objects
 			objs[i]->move();
-			objs[i]->draw();
+			objs[i]->draw();		
 		}
 		
 		// Output to screen

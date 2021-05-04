@@ -725,6 +725,7 @@ void SSD1306_DrawBMP(uint8_t xpos, uint8_t ypos, const uint8_t *ptr, uint8_t thr
   j = ptr[10];                  // byte 10 contains the offset where image data can be found
   for(i=1; i<=(width*height/2); i=i+1){
     // the left pixel is in the upper 4 bits
+		if(screenx < 1024){
     if(((ptr[j]>>4)&0xF) > threshold){
       switch(color) {
         case SSD1306_WHITE:   buffer[screenx] |= mask; break;
@@ -738,9 +739,10 @@ void SSD1306_DrawBMP(uint8_t xpos, uint8_t ypos, const uint8_t *ptr, uint8_t thr
         case SSD1306_INVERSE:  break;
       }      
     }
+	}
     screenx = screenx + 1;
     // the right pixel is in the lower 4 bits
-    if((ptr[j]&0xF) > threshold){
+    if((ptr[j]&0xF) > threshold && screenx < 1024){
       buffer[screenx] |= mask;
     } else{
       buffer[screenx] &= ~mask;

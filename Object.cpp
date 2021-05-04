@@ -77,6 +77,10 @@ int16_t Object::getSize(){
 }
 
 bool Object::isColliding(Object &other){
+	if(destroyed || other.isDestoyed()){ // destroyed objects cannot collide with one another
+		return false;
+	}
+	
 	int16_t xCenterOther = other.getX() + other.getSize()/2; 	//get x and y position of the center of both objects
 	int16_t yCenterOther = other.getY() - other.getSize()/2;
 	int16_t xCenterThis = this->x + this->size/2;

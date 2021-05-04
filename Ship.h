@@ -11,11 +11,11 @@
 //const uint8_t* const sprites[NUM_SPRITES] = {ShipRight, ShipDownRight, ShipDown, ShipDownLeft, ShipLeft, ShipUpLeft, ShipUp, ShipUpRight};
 
 class Ship : public Object{
-	const uint8_t* defaultAnimation();
+	virtual const uint8_t* defaultAnimation();
 	public:
 		Ship(int16_t x, int16_t y);
 		void fire(Laser &l);
-	  int16_t getType();   // returns the Specific type of Object, Ex: SHIP_TYPE, ASTEROID_TYPE, Etc.
+	  virtual int16_t getType();   // returns the Specific type of Object, Ex: SHIP_TYPE, ASTEROID_TYPE, Etc.
 };
 
 #endif

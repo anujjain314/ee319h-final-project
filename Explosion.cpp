@@ -4,7 +4,7 @@
 
 const uint8_t* explosionSpriteList[EXPLOSION_NUM_SPRITES] = {BigExplosion0, BigExplosion1};
 
-Explosion::Explosion(int x, int y) : Object(x, y, 0, 0){
+Explosion::Explosion(int16_t x, int16_t y) : Object(x, y, 0, 0){
 	deathCounter = EXPLOSION_LIFETIME;
 	size = EXPLOSION_SIZE;
 }
