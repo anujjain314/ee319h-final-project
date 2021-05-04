@@ -2,7 +2,7 @@
 #define _Laser_h
 #include "Object.h"
 
-#define LASER_SPEED 300
+#define LASER_SPEED 30000
 #define LASER_LIFETIME 5 // number of frames before the laser should fade away
 #define LASER_SIZE 400  // 4 pixels
 

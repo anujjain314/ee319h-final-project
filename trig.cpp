@@ -3,8 +3,8 @@
 
 void Trig::setComponents(int16_t*x, int16_t*y, int16_t magnitude, uint8_t direction){
 	uint8_t i = Utility::toIndex(direction, 255, NUM_DIRECTIONS); // convert direction to an index that can be used to index into sin/cos arrays
-	*x = cos[i] * magnitude;
-	*y = sin[i] * magnitude;
+	*x = (cos[i] * magnitude)/100;
+	*y = (sin[i] * magnitude)/100;
 }
 
 int32_t Trig::getDistance(int32_t x1, int32_t x2, int32_t y1, int32_t y2){
