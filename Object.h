@@ -8,8 +8,8 @@
 #include "vector.h"
 
 //Max values for position and velocity, based on SSD1306 display
-#define MAX_X 12800
-#define MAX_Y 6400
+#define MAX_X 12700
+#define MAX_Y 6300
 
 #define FRAME_RATE 20
 #define NULL 0

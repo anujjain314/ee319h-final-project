@@ -29,9 +29,9 @@ int32_t Utility::sameSign(int32_t x, int32_t y){
 	return getSign(x) == getSign(y);
 }
 
-int32_t Utility::sqrt(int32_t value) {
-	float estimate, sqrt;
-	int square = value;
+uint32_t Utility::sqrt(int32_t value) {
+	uint32_t estimate, sqrt;
+	uint32_t square = value;
 	sqrt = square / 2;
 	estimate = 0;
 

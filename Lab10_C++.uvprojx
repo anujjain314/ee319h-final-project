@@ -484,11 +484,6 @@
               <FilePath>.\asteroid.cpp</FilePath>
             </File>
             <File>
-              <FileName>Explosion.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Explosion.h</FilePath>
-            </File>
-            <File>
               <FileName>Explosion.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\Explosion.cpp</FilePath>

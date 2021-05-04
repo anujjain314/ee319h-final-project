@@ -14,7 +14,7 @@ class Utility{
 
 	  static int32_t getSign(int32_t x); // returns the sign of the number: 1, -1, or 0
 	  static int32_t sameSign(int32_t x, int32_t y);
-		static int32_t sqrt(int32_t value); // returns square root of a value
+		static uint32_t sqrt(int32_t value); // returns square root of a value
 };
 
 #endif
