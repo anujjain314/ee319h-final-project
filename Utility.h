@@ -11,6 +11,7 @@ class Utility{
 		static int32_t abs(int32_t x); // returns the absolute value of x
 	  static int32_t min(int32_t x, int32_t y); //returns the smaller of the two inputs
 		static int32_t max(int32_t x, int32_t y); //returns the larger of the two inputs
+		static int32_t sqrt(int32_t value); // returns square root of a value
 };
 
 #endif

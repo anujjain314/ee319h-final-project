@@ -47,6 +47,8 @@ class Object {
 		int16_t getX();    // returns x position
 		int16_t getY();    // returns y position
 	  int16_t getSize();   // returns size
+		int16_t getVelocity(); //returns velocity
+		int16_t getDirection(); // returns direction
 	  virtual int16_t getType();   // returns the Specific type of Object, Ex: SHIP_TYPE, ASTEROID_TYPE, Etc.
 		bool isDestoyed(); // returns true if the object is destoyed
 	  void destroy();    // destroys the object

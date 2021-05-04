@@ -15,6 +15,7 @@ class asteroid : public Object{
 	public:
 		asteroid(int16_t x = 0, int16_t y = 0, uint8_t dir = 0, int16_t velocity = 0, AsteroidType type = asteroid_small);
 	  virtual int16_t getType();   // returns the Specific type of Object, Ex: SHIP_TYPE, ASTEROID_TYPE, Etc.
+		bool breakDown(vector<Object*> &v);
 };
 
 #endif
