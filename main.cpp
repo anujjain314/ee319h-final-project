@@ -58,6 +58,7 @@
 #include "laser.h"
 #include "vector.h"
 #include "asteroid.h"
+#include "Explosion.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -99,6 +100,11 @@ void removeAndDestroy(vector<Object*> &v, uint8_t i, uint8_t j){ // removes and 
 	v.remove(j);
 }
 
+void removeAndDestroy(vector<Object*> &v, uint8_t i){ // removes and destroyed object at indices i
+	v[i]->destroy();
+	v.remove(i);
+}
+
 bool collisionBetween(int16_t type1, int16_t type2, Object* o1, Object* o2){
 	return (o1->getType() == type1 && o2->getType() == type2) || (o1->getType() == type2 && o2->getType() == type1);
 }
@@ -138,9 +144,11 @@ int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> o
 			for(int j = 0; j < objs.len(); j++){
 				if(i != j && objs[i]->isColliding(*objs[j])){
 					if(collisionBetween(ASTEROID_TYPE, LASER_TYPE, objs[i], objs[j])){
+						objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
 						removeAndDestroy(objs, i, j);
 						//Add method to break up large asteroids, add explosion
 					} else if(collisionBetween(ASTEROID_TYPE, SHIP_TYPE, objs[i], objs[j])){
+						objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
 						removeAndDestroy(objs, i, j);
 						// Game Over or Whatever
 					}
