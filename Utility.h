@@ -11,6 +11,8 @@ class Utility{
 		static int32_t abs(int32_t x); // returns the absolute value of x
 	  static int32_t min(int32_t x, int32_t y); //returns the smaller of the two inputs
 		static int32_t max(int32_t x, int32_t y); //returns the larger of the two inputs
+	  static int32_t getSign(int32_t x); // returns the sign of the number: 1, -1, or 0
+	  static int32_t sameSign(int32_t x, int32_t y);
 };
 
 #endif
