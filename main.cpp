@@ -87,7 +87,6 @@ void Profile_Init(void){
 }
 //********************************************************************************
  
-Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> objs(10);
 extern "C" void DisableInterrupts(void);
 extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
@@ -131,12 +130,12 @@ void removeDestroyed(vector<Object*> &objs){
 }
 
 // Polymorphism Test
-int main(void){
+int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> objs(10);
 	PLL_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
-	objs.push_back(new asteroid(2000,2000, 47, 20, asteroid_small));
-	objs.push_back(new asteroid(4000,2000, 157, 10, asteroid_large));
+	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
+	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
 	while(true){
 		SSD1306_ClearBuffer();
 		Delay100ms(1);
@@ -149,7 +148,7 @@ int main(void){
 			player->turn(20);
 		}
 		if(s.up_Pressed()){
-			player->setAcceleration(200);
+			player->setAcceleration(20000);
 		} else{
 			player->setAcceleration(0);
 		}
@@ -169,7 +168,7 @@ int main(void){
 		for(uint8_t i = 0; i < objs.len(); i++){
 			objs[i]->move();
 			objs[i]->draw();		
-		}
+		} 
 		
 		// Output to screen
 		SSD1306_OutBuffer();
