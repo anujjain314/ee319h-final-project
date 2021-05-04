@@ -1,6 +1,8 @@
 #include "Ship.h"
 
-const uint8_t* shipSpriteList[8] = {ShipRight, ShipDownRight, ShipDown, ShipDownLeft, ShipLeft, ShipUpLeft, ShipUp, ShipUpRight};
+#define SHIP_NUM_SPRITES 8
+
+const uint8_t* shipSpriteList[SHIP_NUM_SPRITES] = {ShipRight, ShipDownRight, ShipDown, ShipDownLeft, ShipLeft, ShipUpLeft, ShipUp, ShipUpRight};
 
 Ship::Ship(int16_t x, int16_t y) : Object(x,y,0,0){
 	maxV = 8000;
@@ -13,7 +15,7 @@ void Ship::fire(Laser &l){
 }
 
 const uint8_t *Ship::defaultAnimation(){
-	uint8_t i = Utility::toIndex(dir, 255, 8); //default sprite is based on the direction the ship is moving
+	uint8_t i = Utility::toIndex(dir, 255,SHIP_NUM_SPRITES); //default sprite is based on the direction the ship is moving
 	return shipSpriteList[i];
 }
 
