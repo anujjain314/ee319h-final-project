@@ -16,3 +16,7 @@ const uint8_t *Ship::defaultAnimation(){
 	uint8_t i = Utility::toIndex(dir, 255, 8); //default sprite is based on the direction the ship is moving
 	return shipSpriteList[i];
 }
+
+int16_t Ship::getType(){
+	return SHIP_TYPE;
+}

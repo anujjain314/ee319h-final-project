@@ -7,14 +7,14 @@
 #include "Utility.h"
 #include "vector.h"
 
-// Min and Max values for position and velocity
-#define MAX_X 12000
-#define MAX_Y 5600
-#define MIN_X 800
-#define MIN_Y 800
+//Max values for position and velocity, based on SSD1306 display
+#define MAX_X 12800
+#define MAX_Y 6400
 
 #define FRAME_RATE 20
 #define NULL 0
+
+#define OBJECT_TYPE 0
 
 class Object {
 	protected:
@@ -47,6 +47,7 @@ class Object {
 		int16_t getX();    // returns x position
 		int16_t getY();    // returns y position
 	  int16_t getSize();   // returns size
+	  virtual int16_t getType();   // returns the Specific type of Object, Ex: SHIP_TYPE, ASTEROID_TYPE, Etc.
 		bool isDestoyed(); // returns true if the object is destoyed
 	  void destroy();    // destroys the object
 	  bool isColliding(Object &other); // returns true if this object is colliding with the other object

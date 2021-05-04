@@ -17,3 +17,7 @@ const uint8_t* asteroid::defaultAnimation(){
 	else
 		return asteroidSpriteList[1];
 }
+
+int16_t asteroid::getType(){
+	return ASTEROID_TYPE;
+}

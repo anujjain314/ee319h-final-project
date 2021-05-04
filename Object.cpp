@@ -30,13 +30,13 @@ void Object::move(){
 		vy = temp2;
 	}
 	
-	if(x > MAX_X)  // wrapping
-		x = MIN_X;
+	if(x > MAX_X - size)  // wrapping
+		x = 0;
 	if(y > MAX_Y)
-		y = MIN_Y;
-	if(x < MIN_X)
-		x = MAX_X;
-	if(y < MIN_Y)
+		y = size;
+	if(x < 0)
+		x = MAX_X - size;
+	if(y < size)
 		y = MAX_Y;
 }
 
@@ -120,6 +120,10 @@ const uint8_t* Object::animate(){
 
 const uint8_t* Object::defaultAnimation(){
 	return NULL;
+}
+
+int16_t Object::getType(){
+	return OBJECT_TYPE;
 }
 
 void Object::draw(){

@@ -92,12 +92,72 @@ extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
-// Test Player Class, Laser Class, Asteroid Class, dont try to understand this spaghetti code, random testing
-int main(void){ Switch s; Ship player(6000, 3800); vector<Laser> v(10); vector<asteroid> v2(10);
+
+
+// Polymorphism Test
+int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> objs(10);
 	PLL_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
-	v2.push_back(asteroid(2000,2000, 47, 20, asteroid_small));
-	v2.push_back(asteroid(4000,2000, 157, 10, asteroid_large));
+	objs.push_back(player);
+	objs.push_back(new asteroid(2000,2000, 47, 20, asteroid_small));
+	objs.push_back(new asteroid(4000,2000, 157, 10, asteroid_large));
+	while(true){
+		SSD1306_ClearBuffer();
+		Delay100ms(1);
+		
+		// Handle Button Presses
+		if(s.left_Pressed()){
+			player->turn(-20);
+		} 
+		else if(s.right_Pressed()){
+			player->turn(20);
+		}
+		if(s.up_Pressed()){
+			player->setAcceleration(200);
+		} else{
+			player->setAcceleration(0);
+		}
+		if(s.down_Clicked()){
+			if(objs.push_back(new Laser())){
+				player->fire(*static_cast<Laser*>(objs.back()));
+			}
+		}
+		
+		// Handle Objects
+		for(uint8_t i = 0; i < objs.len(); i++){
+			for(int j = 0; j < objs.len(); j++){
+				// Handle All Collisons
+				if(i != j && objs[i]->isColliding(*objs[j])){
+					objs[j]->destroy();
+					objs[i]->destroy();
+				}
+			}
+			
+			// remove destroyed objects from vector
+			if(objs[i]->isDestoyed()){
+				delete objs[i];
+				objs.remove(i);
+			}
+			// move and draw all objects
+			objs[i]->move();
+			objs[i]->draw();
+		}
+		
+		// Output to screen
+		SSD1306_OutBuffer();
+	}
+}
+
+
+
+
+
+// Test Player Class, Laser Class, Asteroid Class, dont try to understand this spaghetti code, random testing
+int main5(void){ Switch s; Ship player(6000, 3800); vector<Laser*> v(10); vector<asteroid*> v2(10);
+	PLL_Init();
+	SSD1306_Init(SSD1306_SWITCHCAPVCC);
+	v2.push_back(new asteroid(2000,2000, 47, 20, asteroid_small));
+	v2.push_back(new asteroid(4000,2000, 157, 10, asteroid_large));
 	while(true){
 		SSD1306_ClearBuffer();
 		Delay100ms(1);
@@ -114,37 +174,37 @@ int main(void){ Switch s; Ship player(6000, 3800); vector<Laser> v(10); vector<a
 		}
 		if(s.down_Clicked()){
 			if(!v.isFull()){
-				v.push_back(Laser());
-				player.fire(v.back());
+				v.push_back(new Laser());
+				player.fire(*v.back());
 			}
 		}
 		for(uint8_t i = 0; i < v.len(); i++){
 			
 			for(int j = 0; j < v2.len(); j++){
-				if(v[i].isColliding(v2[j])){
-					v2[j].destroy();
-					v[i].destroy();
+				if(v[i]->isColliding(*v2[j])){
+					v2[j]->destroy();
+					v[i]->destroy();
 				}
 			}
 			
-			if(v[i].isDestoyed()){
+			if(v[i]->isDestoyed()){
 				v.remove(i);
 			}
-			v[i].move();
-			v[i].draw();
+			v[i]->move();
+			v[i]->draw();
 		}
 		
 		for(uint8_t i = 0; i < v2.len(); i++){
-			if(v2[i].isDestoyed()){
+			if(v2[i]->isDestoyed()){
 				v2.remove(i);
 			}
 			
-			if(v2[i].isColliding(player)){
+			if(v2[i]->isColliding(player)){
 				player.destroy();
 			}
 			
-			v2[i].move();
-			v2[i].draw();
+			v2[i]->move();
+			v2[i]->draw();
 		}
 		
 			player.move();
