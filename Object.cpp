@@ -87,9 +87,9 @@ bool Object::isColliding(Object &other){
 	return (distance < (other.getSize()/2 + this->size/2)); // collision if distance between centers is less than half the sum of the objects' sizes
 }
 
-void Object::getCollisions(vector<Object> &others, vector<Object> &collisions){
+void Object::getCollisions(vector<Object*> &others, vector<Object*> &collisions){
 	for(uint8_t i = 0; i < others.len(); i++){
-		if(isColliding(others[i]))
+		if(isColliding(*others[i]))
 			collisions.push_back(others[i]);
 	}
 }

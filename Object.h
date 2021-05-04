@@ -51,7 +51,7 @@ class Object {
 		bool isDestoyed(); // returns true if the object is destoyed
 	  void destroy();    // destroys the object
 	  bool isColliding(Object &other); // returns true if this object is colliding with the other object
-		void getCollisions(vector<Object> &others, vector<Object> &collisions); //adds all objects in others vector that collide with this object to the collisions vector
+		void getCollisions(vector<Object*> &others, vector<Object*> &collisions); //adds all objects in others vector that collide with this object to the collisions vector
 		void setAnimation(const uint8_t **anim, uint8_t fps, uint8_t numFrames);
 		void draw(); // draws the object on the SSD_1306
 };
