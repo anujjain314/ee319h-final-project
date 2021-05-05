@@ -109,6 +109,7 @@ Ship* player = new Ship(6000, 3800);
 vector<Object*> objs(20);
 bool needToDraw = false;
 bool needReset = false;
+bool needRestart = false;
 
 // returns true if one of the objects is either type1 or type2 and the other object is the other type
 bool checkTypes(int16_t type1, int16_t type2, Object* o1, Object* o2){
@@ -256,6 +257,20 @@ int main(void){
 			player = new Ship(6000, 3800);
 			objs.push_back(player);
 			asteroidSpawnRate /= 2;
+			asteroidTime = asteroidSpawnRate;
+			EnableInterrupts();
+		}
+		if(needRestart){
+			DisableInterrupts();
+			needReset = false;
+			score = 0;
+			for(int8_t i = objs.len() - 1; i >= 0; i--){
+				delete objs[i];
+				objs.remove(i);
+			}
+			player = new Ship(6000, 3800);
+			objs.push_back(player);
+			asteroidSpawnRate = 100;
 			asteroidTime = asteroidSpawnRate;
 			EnableInterrupts();
 		}
