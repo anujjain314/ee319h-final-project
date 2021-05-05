@@ -32,7 +32,7 @@ void menu::menuInit() {
 	}
 }
 
-void menu::gameOver() {
+void menu::gameOver(uint32_t finalScore) {
 	if (language == ENGLISH) {
 		SSD1306_OutClear();
 		SSD1306_OutString((char*)"Game Over!");

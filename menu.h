@@ -17,9 +17,8 @@ class menu {
 	public:
 		menu(int8_t language, bool start, Switch& s);
 	  void menuInit();
-		void gameOver();
+		void gameOver(uint32_t score);
 		int8_t lang();
-		int32_t finalScore;
 };
 
 #endif

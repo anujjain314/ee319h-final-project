@@ -29,7 +29,7 @@ bool asteroid::breakDown(vector<Object*> &v) {
 	return true;
 }
 
-void asteroid::generateRandomAsteroid(vector<Object*> &v, Ship* player) {
+void asteroid::generateRandomAsteroid(vector<Object*> &v) {
 	Random_Init(Random32());
 	AsteroidType aType;
 	if (Random() < 128) {
@@ -43,11 +43,6 @@ void asteroid::generateRandomAsteroid(vector<Object*> &v, Ship* player) {
 	int16_t randY = ((Random32())%6400);
 	int16_t randVX = ((Random32())%3000) - 1500;
 	int16_t randVY = ((Random32())%3000) - 1500;
-	
-//	while (Trig::getDistance(x, player->getX(), y, player->getY()) < 7) {
-//		randX = ((Random32()>>24)%128);
-//		randY = ((Random32()>>24)%64);
-//	}
 	
 	
 	if(Random() < 128){	

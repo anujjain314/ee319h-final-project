@@ -19,7 +19,7 @@ class asteroid : public Object{
 	  asteroid(int16_t x = 0, int16_t y = 0, int16_t vx = 0, int16_t vy = 0, AsteroidType type = asteroid_small);
 	  virtual int16_t getType();   // returns the Specific type of Object, Ex: SHIP_TYPE, ASTEROID_TYPE, Etc.
 		bool breakDown(vector<Object*> &v);
-		static void generateRandomAsteroid(vector<Object*> &v, Ship* player);
+		static void generateRandomAsteroid(vector<Object*> &v);
 };
 
 #endif

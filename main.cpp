@@ -101,6 +101,8 @@ extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
 //Global Vars
+int8_t asteroidTime = 1;
+SlidePot pot(185, 66);
 uint32_t score = 0;
 uint8_t asteroidSpawnRate = 100;
 Switch s;
@@ -158,6 +160,28 @@ void removeDestroyed(vector<Object*> &objs){
 	}
 }
 
+void spawnRandomAsteroids(vector<Object*> &objs){
+		asteroidTime -= 1;
+		if (asteroidTime <= 0 && !objs.isFull()) {
+			asteroid::generateRandomAsteroid(objs);
+			asteroidTime = asteroidSpawnRate;
+		}
+}
+
+void outputScore(uint32_t score, uint8_t language){
+			char scoreStr[10];
+			char output[18];
+			Utility::toString(scoreStr, score);
+			if (language == ENGLISH) {
+				Utility::addStrings(output, (char *)"Score : ", scoreStr);
+				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			}
+			else if (language == SPANISH) {
+				Utility::addStrings(output, (char *)"Resultado : ", scoreStr);
+				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			}
+}
+
 void SysTick_Init(unsigned long period){
   NVIC_ST_CTRL_R = 0;
 	NVIC_ST_RELOAD_R = period - 1;
@@ -165,15 +189,7 @@ void SysTick_Init(unsigned long period){
 	NVIC_ST_CTRL_R = 0x0000007;
 }
 
-uint32_t time;
-int8_t asteroidTime = 1;
-SlidePot pot(185, 66);
 void SysTick_Handler(void){ // every 50 ms
-		asteroidTime -= 1;
-		if (asteroidTime <= 0 && !objs.isFull()) {
-			asteroid::generateRandomAsteroid(objs, player);
-			asteroidTime = asteroidSpawnRate;
-		}
 		// Handle Button Presses
 		if(s.left_Pressed()){
 			player->turn(-20);
@@ -186,6 +202,7 @@ void SysTick_Handler(void){ // every 50 ms
 		int data = ADC_In();
     pot.Save(data);
 		player->setAcceleration(pot.ADCsample()/2);
+// 		Alternative - Thrust with up button
 //		if(s.up_Pressed()){
 //			player->setAcceleration(20000);
 //		} else{
@@ -194,17 +211,18 @@ void SysTick_Handler(void){ // every 50 ms
 		if (s.up_Clicked()) {
 			endGame = true;
 		}
+		// Fire laser if down is clicked
 		if(s.down_Clicked()){
-			Laser *l = new Laser();
-			if(objs.push_back(l)){
-				player->fire(*l);
-			} else {
-				delete l;
+			if(!objs.isFull()){
+				objs.push_back(new Laser());
+				player->fire(*static_cast<Laser*>(objs.back()));
 			}
 		}
-		// Handle Objects
+		
+		// Handle All Objects
+		spawnRandomAsteroids(objs);			// Randomly generates asterouids
 		handleCollisions(objs, &score); // Handles all Collisions, updates score
-		removeDestroyed(objs); //  Removes destroyed objects from object vector
+		removeDestroyed(objs); 					//  Removes destroyed objects from object vector
 		// Move all objects
 		for(uint8_t i = 0; i < objs.len(); i++){
 			objs[i]->move();
@@ -213,8 +231,7 @@ void SysTick_Handler(void){ // every 50 ms
 		if(!player->isDestoyed()){	// player gets points for survining
 			score = score + 9;
 		}
-
-		needToDraw = true;    // Draw objects in main
+		needToDraw = true;    			// Draw objects in main
 }
 
 
@@ -226,42 +243,27 @@ int main(void){
 	objs.push_back(player);
 	menu m(NO_SELECTION, false, s);
 	m.menuInit();
-	Delay100ms(1);
 	endGame = false;
 	SysTick_Init(50*MS);
 	while(true){
-		m.finalScore = score;
-		if (endGame) {
-			endGame = false;
-			needRestart = true;
-			m.gameOver();
-		}
+		
 		if(needToDraw){
 			needToDraw = false;
 			SSD1306_ClearBuffer();
 			//display score
-			char scoreStr[10];
-			char output[18];
-			Utility::toString(scoreStr, score);
-			if (m.lang() == ENGLISH) {
-				Utility::addStrings(output, (char *)"Score : ", scoreStr);
-				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
-			}
-			else if (m.lang() == SPANISH) {
-				Utility::addStrings(output, (char *)"Resultado : ", scoreStr);
-				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
-			}
+			outputScore(score, m.lang());
 			//draw all objects
 			for(uint8_t i = 0; i < objs.len(); i++){
 				objs[i]->draw();
 			}
 			SSD1306_OutBuffer();
 		}
+		
 		if(needReset){
 			DisableInterrupts();
+			needReset = false;
 			if(score > 1000)
 				score -= 1000;
-			needReset = false;
 			for(int8_t i = objs.len() - 1; i >= 0; i--){
 				delete objs[i];
 				objs.remove(i);
@@ -272,6 +274,7 @@ int main(void){
 			asteroidTime = asteroidSpawnRate;
 			EnableInterrupts();
 		}
+		
 		if(needRestart){
 			DisableInterrupts();
 			needRestart = false;
@@ -284,6 +287,14 @@ int main(void){
 			objs.push_back(player);
 			asteroidSpawnRate = 100;
 			asteroidTime = asteroidSpawnRate;
+			EnableInterrupts();
+		} 	
+		
+		if (endGame) {
+			DisableInterrupts();
+			endGame = false;
+			needRestart = true;
+			m.gameOver(score);
 			EnableInterrupts();
 		}
 	}
