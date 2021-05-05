@@ -162,6 +162,7 @@ void SysTick_Init(unsigned long period){
 
 uint32_t time;
 uint8_t asteroidTime = 1;
+SlidePot pot(185, 66);
 void SysTick_Handler(void){ // every 50 ms
 		uint32_t t = NVIC_ST_CURRENT_R; //debug, remove later
 		asteroidTime -= 1;
@@ -176,11 +177,16 @@ void SysTick_Handler(void){ // every 50 ms
 		if(s.right_Pressed()){
 			player->turn(20);
 		}
-		if(s.up_Pressed()){
-			player->setAcceleration(20000);
-		} else{
-			player->setAcceleration(0);
-		}
+		
+		// Thrust with slidepot
+		int data = ADC_In();
+    pot.Save(data);
+		player->setAcceleration(pot.ADCsample()/2);
+//		if(s.up_Pressed()){
+//			player->setAcceleration(20000);
+//		} else{
+//			player->setAcceleration(0);
+//		}
 		if(s.down_Clicked()){
 			Laser *l = new Laser();
 			if(objs.push_back(l)){
@@ -210,6 +216,7 @@ void SysTick_Handler(void){ // every 50 ms
 int main(void){
 	PLL_Init();
 	Sound_Init();
+	ADC_Init(SAC_32);  // turn on ADC, set channel to 5
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
 //	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
