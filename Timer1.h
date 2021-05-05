@@ -31,6 +31,7 @@
 //          period in units (1/clockfreq)
 // Outputs: none
 void Timer1_Init(void(*task)(void), uint32_t period);
+void Timer1_Init(); // simply initializes, dosent activate
 
 // Deactivates the Timer, call Timer_Init to reactivate
 void Timer1_Stop();

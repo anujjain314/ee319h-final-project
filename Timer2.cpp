@@ -22,6 +22,7 @@
  */
 #include <stdint.h>
 #include "../inc/tm4c123gh6pm.h"
+#include "Timer2.h"
 
 void (*PeriodicTask2)(void);   // user function
 extern "C" void TIMER2A_Handler(void);
@@ -30,7 +31,7 @@ extern "C" void TIMER2A_Handler(void);
 // Inputs:  task is a pointer to a user function
 //          period in units (1/clockfreq)
 // Outputs: none
-void Timer2_Init(void(*task)(void), unsigned long period){
+void Timer2_Init(void(*task)(void), uint32_t period){
   SYSCTL_RCGCTIMER_R |= 0x04;   // 0) activate timer2
   PeriodicTask2 = task;          // user function
   TIMER2_CTL_R = 0x00000000;    // 1) disable timer2A during setup
@@ -47,7 +48,15 @@ void Timer2_Init(void(*task)(void), unsigned long period){
   TIMER2_CTL_R = 0x00000001;    // 10) enable timer2A
 }
 
+void Timer2_Init(){ // simply initializes, dosent activate
+	SYSCTL_RCGCTIMER_R |= 0x04;   // 0) activate TIMER0
+}	
+
 void TIMER2A_Handler(void){
   TIMER2_ICR_R = TIMER_ICR_TATOCINT;// acknowledge TIMER2A timeout
   (*PeriodicTask2)();                // execute user task
+}
+
+void Timer2_Stop(){
+	TIMER2_CTL_R = 0x00000000;    // disable TIMER1A
 }

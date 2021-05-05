@@ -60,6 +60,8 @@
 #include "asteroid.h"
 #include "Explosion.h"
 #include "Sound.h"
+#include "Music.h"
+#include "Songs.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -95,7 +97,8 @@ extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
 //Global Vars
-Switch s; 
+Switch s;
+Music music;
 Ship* player = new Ship(6000, 3800); 
 vector<Object*> objs(10);
 bool needToDraw = false;
@@ -190,6 +193,7 @@ void SysTick_Handler(void){ // every 50 ms
 int main(void){
 	PLL_Init();
 	Sound_Init();
+	music.playSong(ode_to_joy, 30);
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
 	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));

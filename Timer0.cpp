@@ -49,6 +49,10 @@ void Timer0_Init(void(*task)(void), uint32_t period){
   NVIC_EN0_R = 1<<19;           // 9) enable IRQ 19 in NVIC
   TIMER0_CTL_R = 0x00000001;    // 10) enable TIMER0A
 }
+
+void Timer0_Init(){ // simply initializes, dosent activate
+	SYSCTL_RCGCTIMER_R |= 0x01;   // 0) activate TIMER0
+}	
 void TIMER0A_Handler(void){
   TIMER0_ICR_R = TIMER_ICR_TATOCINT;// acknowledge TIMER0A timeout
   (*PeriodicTask0)();                // execute user task

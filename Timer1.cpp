@@ -49,6 +49,11 @@ void Timer1_Init(void(*task)(void), uint32_t period){
   NVIC_EN0_R = 1<<21;           // 9) enable IRQ 21 in NVIC
   TIMER1_CTL_R = 0x00000001;    // 10) enable TIMER1A
 }
+
+void Timer1_Init(){ // simply initializes, dosent activate
+	SYSCTL_RCGCTIMER_R |= 0x02;   // 0) activate TIMER0
+}	
+
 extern "C" void TIMER1A_Handler(void);
 void TIMER1A_Handler(void){
   TIMER1_ICR_R = TIMER_ICR_TATOCINT;// acknowledge TIMER1A timeout
