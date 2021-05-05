@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include "Sound.h"
 #include "DAC.h"
+#include "Timer1.h"
 // these are sampled at 8 bits 11kHz
 // If your DAC is less than 8 bits you will need to scale the data
 const uint8_t shoot[4080] = {
@@ -1138,10 +1139,25 @@ const uint8_t highpitch[1802] = {
   67, 119, 148, 166, 164, 238, 223, 202, 174, 112, 96, 78, 0, 34, 54, 99, 143, 160, 166, 183, 
   250, 207};
 
+	
+const uint8_t *currSound;
+uint32_t len;
+	
 // initialize a 11kHz timer, flags, pointers, counters,and the DAC
 void Sound_Init(void){
-// write this
+	DAC_Init();
 };
+
+// Excecuted by the timer isr at 11 kHz, outputs one point to the dac until it reaches then end of the sound
+void Sound_Play(){
+	if(len == 0){
+		Timer1_Stop();
+		return;
+	}
+	DAC_Out(*currSound);
+	currSound++;
+	len--;
+}
 
 //******* Sound_Start ************
 // This function does not output to the DAC. 
@@ -1153,9 +1169,11 @@ void Sound_Init(void){
 // Output: none
 // special cases: as you wish to implement
 void Sound_Start(const uint8_t *pt, uint32_t count){
-  
-// write this
+	currSound = pt;
+	len = count;
+  Timer1_Init(*Sound_Play, 7273);
 };
+
 // 11 kHz timer ISR
 // 
 // timer ISR sends one point to DAC each interrupt
