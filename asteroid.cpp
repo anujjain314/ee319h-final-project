@@ -32,28 +32,28 @@ bool asteroid::breakDown(vector<Object*> &v) {
 
 void asteroid::generateRandomAsteroid(vector<Object*> &v, Ship* player) {
 	Random_Init(NVIC_ST_CURRENT_R);
+	AsteroidType aType;
 	if (Random() < 128) {
-		type = asteroid_small;
+		aType = asteroid_small;
 	}
 	else {
-		type = asteroid_large;
+		aType = asteroid_large;
 	}
 	
-	int randX = ((Random32()>>24)%128);
-	int randY = ((Random32()>>24)%64);
+	int32_t randX = ((Random32()>>24)%128);
+	int32_t randY = ((Random32()>>24)%64);
 	
-	while (Trig::getDistance(x, player->getX(), y, player->getY()) < 7) {
-		randX = ((Random32()>>24)%128);
-		randY = ((Random32()>>24)%64);
-	}
+//	while (Trig::getDistance(x, player->getX(), y, player->getY()) < 7) {
+//		randX = ((Random32()>>24)%128);
+//		randY = ((Random32()>>24)%64);
+//	}
 	
-	x = randX * 100;
-	y = randY * 100;
+	int32_t x = randX * 100;
+	int32_t y = randY * 100;
 	
-	dir = Random();
-	vx = (Random32()>>24)%50;
-	vy = (Random32()>>24)%50;
+	int32_t dir = Random();
+	int32_t velocity = (Random32()>>24)%30000;
 	
-	v.push_back(new asteroid(x, y, dir, getVelocity(), type));
+	v.push_back(new asteroid(x, y, dir, velocity, aType));
 }
 
