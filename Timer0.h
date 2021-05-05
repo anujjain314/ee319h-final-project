@@ -32,4 +32,7 @@
 // Outputs: none
 void Timer0_Init(void(*task)(void), uint32_t period);
 
+// Deactivates the Timer, call Timer_Init to reactivate
+void Timer0_Stop();
+
 #endif // __TIMER2INTS_H__
