@@ -3,11 +3,11 @@
 // Jonathan Valvano and Daniel Valvano
 // This is a starter project for the EE319K Lab 10 in C++
 
-// Last Modified: 1/16/2021 
+// Last Modified: 1/16/2021
 // http://www.spaceinvaders.de/
 // sounds at http://www.classicgaming.cc/classics/spaceinvaders/sounds.php
 // http://www.classicgaming.cc/classics/spaceinvaders/playguide.php
-/* 
+/*
  Copyright 2021 by Jonathan W. Valvano, valvano@mail.utexas.edu
     You may use, edit, run or distribute this file
     as long as the above copyright notice remains
@@ -22,14 +22,14 @@
 // ******* Possible Hardware I/O connections*******************
 // Slide pot pin 1 connected to ground
 // Slide pot pin 2 connected to PD2/AIN5
-// Slide pot pin 3 connected to +3.3V 
+// Slide pot pin 3 connected to +3.3V
 // fire button connected to PE0
 // special weapon fire button connected to PE1
 // 47k  resistor DAC bit 0 on PB0 (least significant bit)
 // 24k  resistor DAC bit 1 on PB1
 // 12k  resistor DAC bit 2 on PB2
-// 6k   resistor DAC bit 3 on PB3 
-// 3k   resistor DAC bit 4 on PB4 
+// 6k   resistor DAC bit 3 on PB3
+// 3k   resistor DAC bit 4 on PB4
 // 1.5k resistor DAC bit 5 on PB5 (most significant bit)
 
 // VCC   3.3V power to OLED
@@ -59,9 +59,11 @@
 #include "vector.h"
 #include "asteroid.h"
 #include "Explosion.h"
+#include "menu.h"
 #include "Sound.h"
 #include "Music.h"
 #include "Songs.h"
+
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -71,10 +73,10 @@
 #define PF1       (*((volatile uint32_t *)0x40025008))
 #define PF2       (*((volatile uint32_t *)0x40025010))
 #define PF3       (*((volatile uint32_t *)0x40025020))
-#define PA5       (*((volatile uint32_t *)0x40004080)) 
-#define PA4       (*((volatile uint32_t *)0x40004040)) 
+#define PA5       (*((volatile uint32_t *)0x40004080))
+#define PA4       (*((volatile uint32_t *)0x40004040))
 #define MS				80000 //One millisecond at 80 Mhz
-// TExaSdisplay logic analyzer shows 7 bits 0,PA5,PA4,PF3,PF2,PF1,0 
+// TExaSdisplay logic analyzer shows 7 bits 0,PA5,PA4,PF3,PF2,PF1,0
 void LogicAnalyzerTask(void){
   UART0_DR_R = 0x80|PF321|PA54; // sends at 10kHz
 }
@@ -84,13 +86,13 @@ void ScopeTask(void){  // called 10k/sec
 void Profile_Init(void){
   SYSCTL_RCGCGPIO_R |= 0x21;      // activate port A,F
   while((SYSCTL_PRGPIO_R&0x20) != 0x20){};
-  GPIO_PORTF_DIR_R |=  0x0E;   // output on PF3,2,1 
+  GPIO_PORTF_DIR_R |=  0x0E;   // output on PF3,2,1
   GPIO_PORTF_DEN_R |=  0x0E;   // enable digital I/O on PF3,2,1
   GPIO_PORTA_DIR_R |=  0x30;   // output on PA4 PA5
-  GPIO_PORTA_DEN_R |=  0x30;   // enable on PA4 PA5  
+  GPIO_PORTA_DEN_R |=  0x30;   // enable on PA4 PA5
 }
 //********************************************************************************
- 
+
 extern "C" void DisableInterrupts(void);
 extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
@@ -99,7 +101,7 @@ void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 //Global Vars
 Switch s;
 Music music;
-Ship* player = new Ship(6000, 3800); 
+Ship* player = new Ship(6000, 3800);
 vector<Object*> objs(10);
 bool needToDraw = false;
 
@@ -155,12 +157,12 @@ void SysTick_Init(unsigned long period){
 }
 
 uint32_t time;
-void SysTick_Handler(void){ // every 50 ms	
+void SysTick_Handler(void){ // every 50 ms
 		uint32_t t = NVIC_ST_CURRENT_R; //debug, remove later
 		// Handle Button Presses
 		if(s.left_Pressed()){
 			player->turn(-20);
-		} 
+		}
 		if(s.right_Pressed()){
 			player->turn(20);
 		}
@@ -176,13 +178,13 @@ void SysTick_Handler(void){ // every 50 ms
 			} else {
 				delete l;
 			}
-		}		
+		}
 		// Handle Objects
 		handleCollisions(objs); // Handles all Collisions
 		removeDestroyed(objs); //  Removes destroyed objects from object vector
 		// Move all objects
 		for(uint8_t i = 0; i < objs.len(); i++){
-			objs[i]->move();	
+			objs[i]->move();
 		}
 		needToDraw = true;    // Draw objects in main
 		time = NVIC_ST_CURRENT_R; //debug, remove later, get time to run
@@ -198,6 +200,9 @@ int main(void){
 	objs.push_back(player);
 	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
 	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
+	menu* m = new menu(NO_SELECTION, false);
+	m->menuInit();
+	delete m;
 	SysTick_Init(50*MS);
 	while(true){
 		if(needToDraw){
@@ -226,7 +231,7 @@ int main5(void){ Switch s; Ship player(6000, 3800); vector<Laser*> v(10); vector
 		Delay100ms(1);
 		if(s.left_Pressed()){
 			player.turn(-20);
-		} 
+		}
 		else if(s.right_Pressed()){
 			player.turn(20);
 		}
@@ -242,34 +247,34 @@ int main5(void){ Switch s; Ship player(6000, 3800); vector<Laser*> v(10); vector
 			}
 		}
 		for(uint8_t i = 0; i < v.len(); i++){
-			
+
 			for(int j = 0; j < v2.len(); j++){
 				if(v[i]->isColliding(*v2[j])){
 					v2[j]->destroy();
 					v[i]->destroy();
 				}
 			}
-			
+
 			if(v[i]->isDestoyed()){
 				v.remove(i);
 			}
 			v[i]->move();
 			v[i]->draw();
 		}
-		
+
 		for(uint8_t i = 0; i < v2.len(); i++){
 			if(v2[i]->isDestoyed()){
 				v2.remove(i);
 			}
-			
+
 			if(v2[i]->isColliding(player)){
 				player.destroy();
 			}
-			
+
 			v2[i]->move();
 			v2[i]->draw();
 		}
-		
+
 			player.move();
 			player.draw();
 		  SSD1306_OutBuffer();
@@ -286,7 +291,7 @@ int main3(void){ Switch s; Ship player(6000, 3800); Laser l[10];
 		Delay100ms(1);
 		if(s.left_Pressed()){
 			player.turn(-20);
-		} 
+		}
 		else if(s.right_Pressed()){
 			player.turn(20);
 		}
@@ -323,62 +328,60 @@ int main2(void){uint8_t prev; uint8_t curr; Switch s; uint8_t count;
 }
 
 
-int main1(void){uint32_t time=0;
-  DisableInterrupts();
-  // pick one of the following three lines, all three set to 80 MHz
-  //PLL_Init();                   // 1) call to have no TExaS debugging
-  TExaS_Init(&LogicAnalyzerTask); // 2) call to activate logic analyzer
-  //TExaS_Init(&ScopeTask);       // or 3) call to activate analog scope PD2
-  SSD1306_Init(SSD1306_SWITCHCAPVCC);
-  SSD1306_OutClear();   
-  Random_Init(1);
-  Profile_Init(); // PB5,PB4,PF3,PF2,PF1 
-  SSD1306_ClearBuffer();
-  SSD1306_DrawBMP(2, 62, SpaceInvadersMarquee, 0, SSD1306_WHITE);
-  SSD1306_OutBuffer();
-  EnableInterrupts();
-  Delay100ms(20);
-  SSD1306_ClearBuffer();
-  SSD1306_DrawBMP(47, 63, PlayerShip0, 0, SSD1306_WHITE); // player ship bottom
-  SSD1306_DrawBMP(53, 55, Bunker0, 0, SSD1306_WHITE);
+//int main1(void){uint32_t time=0;
+//  DisableInterrupts();
+//  // pick one of the following three lines, all three set to 80 MHz
+//  //PLL_Init();                   // 1) call to have no TExaS debugging
+//  TExaS_Init(&LogicAnalyzerTask); // 2) call to activate logic analyzer
+//  //TExaS_Init(&ScopeTask);       // or 3) call to activate analog scope PD2
+//  SSD1306_Init(SSD1306_SWITCHCAPVCC);
+//  SSD1306_OutClear();
+//  Random_Init(1);
+//  Profile_Init(); // PB5,PB4,PF3,PF2,PF1
+//  SSD1306_ClearBuffer();
+//  SSD1306_DrawBMP(2, 62, SpaceInvadersMarquee, 0, SSD1306_WHITE);
+//  SSD1306_OutBuffer();
+//  EnableInterrupts();
+//  Delay100ms(20);
+//  SSD1306_ClearBuffer();
+//  SSD1306_DrawBMP(47, 63, PlayerShip0, 0, SSD1306_WHITE); // player ship bottom
+//  SSD1306_DrawBMP(53, 55, Bunker0, 0, SSD1306_WHITE);
 
-  SSD1306_DrawBMP(0, 9, Alien10pointA, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(20,9, Alien10pointB, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(40, 9, Alien20pointA, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(60, 9, Alien20pointB, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(80, 9, Alien30pointA, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(50, 19, AlienBossA, 0, SSD1306_WHITE);
-  SSD1306_OutBuffer();
-  Delay100ms(30);
+//  SSD1306_DrawBMP(0, 9, Alien10pointA, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(20,9, Alien10pointB, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(40, 9, Alien20pointA, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(60, 9, Alien20pointB, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(80, 9, Alien30pointA, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(50, 19, AlienBossA, 0, SSD1306_WHITE);
+//  SSD1306_OutBuffer();
+//  Delay100ms(30);
 
-  SSD1306_OutClear();  
-  SSD1306_SetCursor(1, 1);
-  SSD1306_OutString((char *)"GAME OVER");
-  SSD1306_SetCursor(1, 2);
-  SSD1306_OutString((char *)"Nice try,");
-  SSD1306_SetCursor(1, 3);
-  SSD1306_OutString((char *)"Earthling!");
-  SSD1306_SetCursor(2, 4);
-  while(1){
-    Delay100ms(10);
-    SSD1306_SetCursor(19,0);
-    SSD1306_OutUDec2(time);
-    time++;
-    PF1 ^= 0x02;
-  }
-}
+//  SSD1306_OutClear();
+//  SSD1306_SetCursor(1, 1);
+//  SSD1306_OutString((char *)"GAME OVER");
+//  SSD1306_SetCursor(1, 2);
+//  SSD1306_OutString((char *)"Nice try,");
+//  SSD1306_SetCursor(1, 3);
+//  SSD1306_OutString((char *)"Earthling!");
+//  SSD1306_SetCursor(2, 4);
+//  while(1){
+//    Delay100ms(10);
+//    SSD1306_SetCursor(19,0);
+//    SSD1306_OutUDec2(time);
+//    time++;
+//    PF1 ^= 0x02;
+//  }
+//}
 
 
-// You can't use this timer, it is here for starter code only 
+// You can't use this timer, it is here for starter code only
 // you must use interrupts to perform delays
 void Delay100ms(uint32_t count){uint32_t volatile time;
   while(count>0){
-    time = 727240/2;  // 0.1sec at 80 MHz 
-    while(time){   
+    time = 727240/2;  // 0.1sec at 80 MHz
+    while(time){
       time--;
     }
     count--;
   }
 }
-
-
