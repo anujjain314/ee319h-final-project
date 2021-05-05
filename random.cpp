@@ -12,6 +12,7 @@
 //   m = (Random32()>>24)%60; // a number from 0 to 59
 
 #include <stdint.h>
+#include "random.h"
 uint32_t static M;      
 
 // initialize random number generator

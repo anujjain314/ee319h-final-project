@@ -484,19 +484,9 @@
               <FilePath>.\asteroid.cpp</FilePath>
             </File>
             <File>
-              <FileName>Explosion.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Explosion.h</FilePath>
-            </File>
-            <File>
               <FileName>Explosion.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>.\Explosion.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>Music.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Music.h</FilePath>
             </File>
             <File>
               <FileName>Music.cpp</FileName>
@@ -504,9 +494,9 @@
               <FilePath>.\Music.cpp</FilePath>
             </File>
             <File>
-              <FileName>Songs.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Songs.h</FilePath>
+              <FileName>menu.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\menu.cpp</FilePath>
             </File>
           </Files>
         </Group>

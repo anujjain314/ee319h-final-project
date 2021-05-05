@@ -709,9 +709,9 @@ void SSD1306_DrawBMP(uint8_t xpos, uint8_t ypos, const uint8_t *ptr, uint8_t thr
   // check for clipping
   if((height <= 0) ||              // bitmap is unexpectedly encoded in top-to-bottom pixel order
      ((width%2) != 0) ||           // must be even number of columns
-     ((xpos + width) > WIDTH) ||   // right side cut off
+     ((xpos + width) >= WIDTH) ||   // right side cut off
      (ypos < (height - 1)) ||      // top cut off
-     (ypos > HEIGHT)){             // bottom cut off
+     (ypos >= HEIGHT)){             // bottom cut off
     return;
   }
   if(threshold > 14){

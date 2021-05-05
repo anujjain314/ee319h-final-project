@@ -195,14 +195,12 @@ void SysTick_Handler(void){ // every 50 ms
 int main(void){
 	PLL_Init();
 	Sound_Init();
-	music.playSong(ode_to_joy, 30);
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
 	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
 	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
-	menu* m = new menu(NO_SELECTION, false);
-	m->menuInit();
-	delete m;
+	menu m(NO_SELECTION, false);
+	m.menuInit();
 	SysTick_Init(50*MS);
 	while(true){
 		if(needToDraw){
