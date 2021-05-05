@@ -22,7 +22,7 @@ int16_t asteroid::getType(){
 }
 
 bool asteroid::breakDown(vector<Object*> &v) {
-	if (type == asteroid_small) return false;
+	if (type == asteroid_small || v.isFull()) return false;
 	uint16_t halfSize = ASTEROID_SMALL_SIZE / 2;
 	v.push_back(new asteroid(getX(), getY() + halfSize, getDirection(), -getVelocity(), asteroid_small));
 	v.push_back(new asteroid(getX() + ASTEROID_SMALL_SIZE, getY() + halfSize, getDirection(), getVelocity(), asteroid_small));

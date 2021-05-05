@@ -102,11 +102,13 @@ void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
 //Global Vars
 uint32_t score = 0;
+uint8_t asteroidSpawnRate = 100;
 Switch s;
 Music music;
 Ship* player = new Ship(6000, 3800);
-vector<Object*> objs(10);
+vector<Object*> objs(20);
 bool needToDraw = false;
+bool needReset = false;
 
 // returns true if one of the objects is either type1 or type2 and the other object is the other type
 bool checkTypes(int16_t type1, int16_t type2, Object* o1, Object* o2){
@@ -126,15 +128,17 @@ void handleCollisions(vector<Object*> &objs, uint32_t *score){
 						else {
 							static_cast<asteroid*>(objs[j])->breakDown(objs);
 						}
-//					dynamic_cast<asteroid*>(objs[i])->breakDown(objs);
-					objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
+					if(!objs.isFull())
+						objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
 					objs[i]->destroy();
 					objs[j]->destroy();
 					//Add method to break up large asteroids, add explosion
 				} else if(checkTypes(ASTEROID_TYPE, SHIP_TYPE, objs[i], objs[j])){ // ASTEROID-SHIP collisions
-					objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
+					if(!objs.isFull())
+						objs.push_back(new Explosion(objs[i]->getX(), objs[i]->getY()));
 					objs[i]->destroy();
 					objs[j]->destroy();
+					needReset = true;
 					// Game Over or Whatever
 				}
 			}
@@ -144,11 +148,10 @@ void handleCollisions(vector<Object*> &objs, uint32_t *score){
 
 // Removes all destroyed objects from an object* vector
 void removeDestroyed(vector<Object*> &objs){
-	for(uint8_t i = 0; i < objs.len(); i++){
+	for(int8_t i = objs.len() - 1; i >= 0; i--){
 		if(objs[i]->isDestoyed()){
 			delete objs[i];
 			objs.remove(i);
-			i--;
 		}
 	}
 }
@@ -161,13 +164,12 @@ void SysTick_Init(unsigned long period){
 }
 
 uint32_t time;
-uint8_t asteroidTime = 1;
+int8_t asteroidTime = 1;
 void SysTick_Handler(void){ // every 50 ms
-		uint32_t t = NVIC_ST_CURRENT_R; //debug, remove later
 		asteroidTime -= 1;
-		if (asteroidTime == 0) {
+		if (asteroidTime <= 0 && !objs.isFull()) {
 			asteroid::generateRandomAsteroid(objs, player);
-			asteroidTime = 100;
+			asteroidTime = asteroidSpawnRate;
 		}
 		// Handle Button Presses
 		if(s.left_Pressed()){
@@ -202,8 +204,6 @@ void SysTick_Handler(void){ // every 50 ms
 		}
 		
 		needToDraw = true;    // Draw objects in main
-		time = NVIC_ST_CURRENT_R; //debug, remove later, get time to run
-		time = ((t-time)&0x0FFFFFF)/80;
 }
 
 
@@ -212,8 +212,6 @@ int main(void){
 	Sound_Init();
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
-//	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
-//	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
 	menu m(NO_SELECTION, false);
 	m.menuInit();
 	SysTick_Init(50*MS);
@@ -232,6 +230,21 @@ int main(void){
 				objs[i]->draw();
 			}
 			SSD1306_OutBuffer();
+		}
+		if(needReset){
+			DisableInterrupts();
+			if(score > 1000)
+				score -= 1000;
+			needReset = false;
+			for(int8_t i = objs.len() - 1; i >= 0; i--){
+				delete objs[i];
+				objs.remove(i);
+			}
+			player = new Ship(6000, 3800);
+			objs.push_back(player);
+			asteroidSpawnRate /= 2;
+			asteroidTime = asteroidSpawnRate;
+			EnableInterrupts();
 		}
 	}
 }
