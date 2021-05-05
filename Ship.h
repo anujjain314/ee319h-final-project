@@ -7,8 +7,6 @@
 
 #define SHIP_TYPE 3
 
-//sprites
-//const uint8_t* const sprites[NUM_SPRITES] = {ShipRight, ShipDownRight, ShipDown, ShipDownLeft, ShipLeft, ShipUpLeft, ShipUp, ShipUpRight};
 
 class Ship : public Object{
 	virtual const uint8_t* defaultAnimation();

@@ -70,6 +70,7 @@
 #define PF3       (*((volatile uint32_t *)0x40025020))
 #define PA5       (*((volatile uint32_t *)0x40004080)) 
 #define PA4       (*((volatile uint32_t *)0x40004040)) 
+#define MS				80000 //One millisecond at 80 Mhz
 // TExaSdisplay logic analyzer shows 7 bits 0,PA5,PA4,PF3,PF2,PF1,0 
 void LogicAnalyzerTask(void){
   UART0_DR_R = 0x80|PF321|PA54; // sends at 10kHz
@@ -91,6 +92,12 @@ extern "C" void DisableInterrupts(void);
 extern "C" void EnableInterrupts(void);
 extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
+
+//Global Vars
+Switch s; 
+Ship* player = new Ship(6000, 3800); 
+vector<Object*> objs(10);
+bool needToDraw = false;
 
 // returns true if one of the objects is either type1 or type2 and the other object is the other type
 bool checkTypes(int16_t type1, int16_t type2, Object* o1, Object* o2){
@@ -136,17 +143,16 @@ void removeDestroyed(vector<Object*> &objs){
 	}
 }
 
-// Polymorphism Test
-int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> objs(10);
-	PLL_Init();
-	SSD1306_Init(SSD1306_SWITCHCAPVCC);
-	objs.push_back(player);
-	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
-	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
-	while(true){
-		SSD1306_ClearBuffer();
-		Delay100ms(1);
-		
+void SysTick_Init(unsigned long period){
+  NVIC_ST_CTRL_R = 0;
+	NVIC_ST_RELOAD_R = period - 1;
+	NVIC_ST_CURRENT_R = 0;
+	NVIC_ST_CTRL_R = 0x0000007;
+}
+
+uint32_t time;
+void SysTick_Handler(void){ // every 50 ms	
+		uint32_t t = NVIC_ST_CURRENT_R; //debug, remove later
 		// Handle Button Presses
 		if(s.left_Pressed()){
 			player->turn(-20);
@@ -166,19 +172,36 @@ int main(void){ Switch s; Ship* player = new Ship(6000, 3800); vector<Object*> o
 			} else {
 				delete l;
 			}
-		}
-		
+		}		
 		// Handle Objects
-		handleCollisions(objs);
-		removeDestroyed(objs);
-		// Move and draw all objects
+		handleCollisions(objs); // Handles all Collisions
+		removeDestroyed(objs); //  Removes destroyed objects from object vector
+		// Move all objects
 		for(uint8_t i = 0; i < objs.len(); i++){
-			objs[i]->move();
-			objs[i]->draw();		
-		} 
-		
-		// Output to screen
-		SSD1306_OutBuffer();
+			objs[i]->move();	
+		}
+		needToDraw = true;    // Draw objects in main
+		time = NVIC_ST_CURRENT_R; //debug, remove later, get time to run
+		time = ((t-time)&0x0FFFFFF)/80;
+}
+
+
+int main(void){
+	PLL_Init();
+	SSD1306_Init(SSD1306_SWITCHCAPVCC);
+	objs.push_back(player);
+	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
+	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
+	SysTick_Init(50*MS);
+	while(true){
+		if(needToDraw){
+			needToDraw = false;
+			SSD1306_ClearBuffer();
+			for(uint8_t i = 0; i < objs.len(); i++){
+				objs[i]->draw();
+			}
+			SSD1306_OutBuffer();
+		}
 	}
 }
 
@@ -241,47 +264,6 @@ int main5(void){ Switch s; Ship player(6000, 3800); vector<Laser*> v(10); vector
 			v2[i]->draw();
 		}
 		
-			player.move();
-			player.draw();
-		  SSD1306_OutBuffer();
-	}
-}
-
-
-// Test Player Class
-int main4(void){ Switch s; Ship player(6000, 3800); Laser *l[10];
-	uint8_t numLazers = 0;
-	PLL_Init();
-	SSD1306_Init(SSD1306_SWITCHCAPVCC);
-	while(true){
-		SSD1306_ClearBuffer();
-		Delay100ms(1);
-		if(s.left_Pressed()){
-			player.turn(-20);
-		} 
-		else if(s.right_Pressed()){
-			player.turn(20);
-		}
-		if(s.up_Pressed()){
-			player.setAcceleration(200);
-		} else{
-			player.setAcceleration(0);
-		}
-		if(s.down_Pressed()){
-			if(numLazers == 10){
-				for(uint8_t i = 0; i < numLazers; i++){
-					delete l[i];
-				}
-				numLazers = 0;
-			}
-			numLazers++;
-			l[numLazers-1] = new Laser();
-			player.fire(*l[numLazers-1]);
-		}
-		for(uint8_t i = 0; i < numLazers; i++){
-			l[i]->move();
-			l[i]->draw();
-		}
 			player.move();
 			player.draw();
 		  SSD1306_OutBuffer();
