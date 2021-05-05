@@ -15,6 +15,7 @@ class menu {
 	public:
 		menu(int language, bool start);
 	  void menuInit();
+		int8_t lang();
 };
 
 #endif

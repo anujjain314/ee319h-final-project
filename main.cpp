@@ -232,8 +232,14 @@ int main(void){
 			char scoreStr[10];
 			char output[18];
 			Utility::toString(scoreStr, score);
-			Utility::addStrings(output, (char *)"Score : ", scoreStr);
-			SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			if (m.lang() == ENGLISH) {
+				Utility::addStrings(output, (char *)"Score : ", scoreStr);
+				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			}
+			else if (m.lang() == SPANISH) {
+				Utility::addStrings(output, (char *)"Resultado : ", scoreStr);
+				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			}
 			//draw all objects
 			for(uint8_t i = 0; i < objs.len(); i++){
 				objs[i]->draw();
