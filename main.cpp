@@ -64,6 +64,8 @@
 #include "Music.h"
 #include "Songs.h"
 
+#define ASTEROID_POINTS 100 // Defines the number of points gained by shooting an asteroid
+
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -99,6 +101,7 @@ extern "C" void SysTick_Handler(void);
 void Delay100ms(uint32_t count); // time delay in 0.1 seconds
 
 //Global Vars
+uint32_t score = 0;
 Switch s;
 Music music;
 Ship* player = new Ship(6000, 3800);
@@ -111,13 +114,14 @@ bool checkTypes(int16_t type1, int16_t type2, Object* o1, Object* o2){
 }
 
 // Handles All Collisons between objects in an object* vector
-void handleCollisions(vector<Object*> &objs){
+void handleCollisions(vector<Object*> &objs, uint32_t *score){
 	for(uint8_t i = 0; i < objs.len(); i++){
 		for(uint8_t j = i + 1; j < objs.len(); j++){
 			if(objs[i]->isColliding(*objs[j])){
 				if(checkTypes(ASTEROID_TYPE, LASER_TYPE, objs[i], objs[j])){ // ASTEROID-LASER collisions
 						if (objs[i]->getType() == ASTEROID_TYPE) {
 							static_cast<asteroid*>(objs[i])->breakDown(objs);
+							*score += ASTEROID_POINTS;
 							}
 						else {
 							static_cast<asteroid*>(objs[j])->breakDown(objs);
@@ -180,12 +184,17 @@ void SysTick_Handler(void){ // every 50 ms
 			}
 		}
 		// Handle Objects
-		handleCollisions(objs); // Handles all Collisions
+		handleCollisions(objs, &score); // Handles all Collisions, updates score
 		removeDestroyed(objs); //  Removes destroyed objects from object vector
 		// Move all objects
 		for(uint8_t i = 0; i < objs.len(); i++){
 			objs[i]->move();
 		}
+		
+		if(!player->isDestoyed()){	// player gets points for survining
+			score++;
+		}
+		
 		needToDraw = true;    // Draw objects in main
 		time = NVIC_ST_CURRENT_R; //debug, remove later, get time to run
 		time = ((t-time)&0x0FFFFFF)/80;
@@ -195,7 +204,6 @@ void SysTick_Handler(void){ // every 50 ms
 int main(void){
 	PLL_Init();
 	Sound_Init();
-	music.playSong(ode_to_joy, 30);
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
 	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
@@ -205,8 +213,13 @@ int main(void){
 	SysTick_Init(50*MS);
 	while(true){
 		if(needToDraw){
+			//display score
 			needToDraw = false;
 			SSD1306_ClearBuffer();
+			//draw all objects
+			SSD1306_SetCursor(0,0);
+			SSD1306_DrawString(0,0,(char *)"Score : ", SSD1306_WHITE);
+			SSD1306_OutUDec(score);
 			for(uint8_t i = 0; i < objs.len(); i++){
 				objs[i]->draw();
 			}
