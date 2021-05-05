@@ -59,6 +59,7 @@
 #include "vector.h"
 #include "asteroid.h"
 #include "Explosion.h"
+#include "menu.h"
 
 //********************************************************************************
 // debuging profile, pick up to 7 unused bits and send to Logic Analyzer
@@ -192,6 +193,9 @@ int main(void){
 	objs.push_back(player);
 	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
 	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
+	menu* m = new menu(NO_SELECTION, false);
+	m->menuInit();
+	delete m;
 	SysTick_Init(50*MS);
 	while(true){
 		if(needToDraw){
@@ -317,50 +321,50 @@ int main2(void){uint8_t prev; uint8_t curr; Switch s; uint8_t count;
 }
 
 
-int main1(void){uint32_t time=0;
-  DisableInterrupts();
-  // pick one of the following three lines, all three set to 80 MHz
-  //PLL_Init();                   // 1) call to have no TExaS debugging
-  TExaS_Init(&LogicAnalyzerTask); // 2) call to activate logic analyzer
-  //TExaS_Init(&ScopeTask);       // or 3) call to activate analog scope PD2
-  SSD1306_Init(SSD1306_SWITCHCAPVCC);
-  SSD1306_OutClear();   
-  Random_Init(1);
-  Profile_Init(); // PB5,PB4,PF3,PF2,PF1 
-  SSD1306_ClearBuffer();
-  SSD1306_DrawBMP(2, 62, SpaceInvadersMarquee, 0, SSD1306_WHITE);
-  SSD1306_OutBuffer();
-  EnableInterrupts();
-  Delay100ms(20);
-  SSD1306_ClearBuffer();
-  SSD1306_DrawBMP(47, 63, PlayerShip0, 0, SSD1306_WHITE); // player ship bottom
-  SSD1306_DrawBMP(53, 55, Bunker0, 0, SSD1306_WHITE);
+//int main1(void){uint32_t time=0;
+//  DisableInterrupts();
+//  // pick one of the following three lines, all three set to 80 MHz
+//  //PLL_Init();                   // 1) call to have no TExaS debugging
+//  TExaS_Init(&LogicAnalyzerTask); // 2) call to activate logic analyzer
+//  //TExaS_Init(&ScopeTask);       // or 3) call to activate analog scope PD2
+//  SSD1306_Init(SSD1306_SWITCHCAPVCC);
+//  SSD1306_OutClear();   
+//  Random_Init(1);
+//  Profile_Init(); // PB5,PB4,PF3,PF2,PF1 
+//  SSD1306_ClearBuffer();
+//  SSD1306_DrawBMP(2, 62, SpaceInvadersMarquee, 0, SSD1306_WHITE);
+//  SSD1306_OutBuffer();
+//  EnableInterrupts();
+//  Delay100ms(20);
+//  SSD1306_ClearBuffer();
+//  SSD1306_DrawBMP(47, 63, PlayerShip0, 0, SSD1306_WHITE); // player ship bottom
+//  SSD1306_DrawBMP(53, 55, Bunker0, 0, SSD1306_WHITE);
 
-  SSD1306_DrawBMP(0, 9, Alien10pointA, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(20,9, Alien10pointB, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(40, 9, Alien20pointA, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(60, 9, Alien20pointB, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(80, 9, Alien30pointA, 0, SSD1306_WHITE);
-  SSD1306_DrawBMP(50, 19, AlienBossA, 0, SSD1306_WHITE);
-  SSD1306_OutBuffer();
-  Delay100ms(30);
+//  SSD1306_DrawBMP(0, 9, Alien10pointA, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(20,9, Alien10pointB, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(40, 9, Alien20pointA, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(60, 9, Alien20pointB, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(80, 9, Alien30pointA, 0, SSD1306_WHITE);
+//  SSD1306_DrawBMP(50, 19, AlienBossA, 0, SSD1306_WHITE);
+//  SSD1306_OutBuffer();
+//  Delay100ms(30);
 
-  SSD1306_OutClear();  
-  SSD1306_SetCursor(1, 1);
-  SSD1306_OutString((char *)"GAME OVER");
-  SSD1306_SetCursor(1, 2);
-  SSD1306_OutString((char *)"Nice try,");
-  SSD1306_SetCursor(1, 3);
-  SSD1306_OutString((char *)"Earthling!");
-  SSD1306_SetCursor(2, 4);
-  while(1){
-    Delay100ms(10);
-    SSD1306_SetCursor(19,0);
-    SSD1306_OutUDec2(time);
-    time++;
-    PF1 ^= 0x02;
-  }
-}
+//  SSD1306_OutClear();  
+//  SSD1306_SetCursor(1, 1);
+//  SSD1306_OutString((char *)"GAME OVER");
+//  SSD1306_SetCursor(1, 2);
+//  SSD1306_OutString((char *)"Nice try,");
+//  SSD1306_SetCursor(1, 3);
+//  SSD1306_OutString((char *)"Earthling!");
+//  SSD1306_SetCursor(2, 4);
+//  while(1){
+//    Delay100ms(10);
+//    SSD1306_SetCursor(19,0);
+//    SSD1306_OutUDec2(time);
+//    time++;
+//    PF1 ^= 0x02;
+//  }
+//}
 
 
 // You can't use this timer, it is here for starter code only 
