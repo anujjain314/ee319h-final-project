@@ -2,8 +2,7 @@
 
 const uint8_t* asteroidSpriteList[2] = {AsteroidSmall, AsteroidLarge};
 
-asteroid::asteroid(int16_t x, int16_t y, uint8_t dir, int16_t velocity, AsteroidType type) : Object(x,y,0,0){
-	Trig::setComponents(&vx, &vy, velocity, dir);
+asteroid::asteroid(int16_t x, int16_t y, int16_t vx, int16_t vy, AsteroidType type) : Object(x,y,vx,vy){
 	this->type = type;
 	if(type == asteroid_small)
 		size = ASTEROID_SMALL_SIZE;
@@ -31,7 +30,7 @@ bool asteroid::breakDown(vector<Object*> &v) {
 }
 
 void asteroid::generateRandomAsteroid(vector<Object*> &v, Ship* player) {
-	Random_Init(NVIC_ST_CURRENT_R);
+	Random_Init(Random32());
 	AsteroidType aType;
 	if (Random() < 128) {
 		aType = asteroid_small;
@@ -40,20 +39,45 @@ void asteroid::generateRandomAsteroid(vector<Object*> &v, Ship* player) {
 		aType = asteroid_large;
 	}
 	
-	int32_t randX = ((Random32()>>24)%128);
-	int32_t randY = ((Random32()>>24)%64);
+	int16_t randX = ((Random32())%12800);
+	int16_t randY = ((Random32())%6400);
+	int16_t randVX = ((Random32())%3000) - 1500;
+	int16_t randVY = ((Random32())%3000) - 1500;
 	
 //	while (Trig::getDistance(x, player->getX(), y, player->getY()) < 7) {
 //		randX = ((Random32()>>24)%128);
 //		randY = ((Random32()>>24)%64);
 //	}
 	
-	int32_t x = randX * 100;
-	int32_t y = randY * 100;
 	
-	int32_t dir = Random();
-	int32_t velocity = (Random32()>>24)%30000;
+	if(Random() < 128){	
+		randX += 128;
+	} else {
+		randX -= 128;
+	}
 	
-	v.push_back(new asteroid(x, y, dir, velocity, aType));
+	if(Random() < 128){	
+		randY += 128;
+	} else {
+		randY -= 128;
+	}
+	
+	if(randY < 0){
+		randVY = ((Random32())%2000) + 1000;
+	} else if(randY > MAX_Y){
+		randVY = ((Random32())%2000) - 3000;
+	}
+	
+	if(randX < 0){
+		randVX = ((Random32())%2000) + 1000;
+	} else if(randY > MAX_X){
+		randVY = ((Random32())%2000) - 3000;
+	}
+	
+	
+	uint8_t dir = Random();
+	int16_t velocity = (Random32())%3000;
+	
+	v.push_back(new asteroid(randX, randY, randVX, randVY, aType));
 }
 

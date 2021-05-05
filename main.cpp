@@ -64,7 +64,7 @@
 #include "Music.h"
 #include "Songs.h"
 
-#define ASTEROID_POINTS 100 // Defines the number of points gained by shooting an asteroid
+#define ASTEROID_POINTS 1000 // Defines the number of points gained by shooting an asteroid
 
 
 //********************************************************************************
@@ -167,7 +167,7 @@ void SysTick_Handler(void){ // every 50 ms
 		asteroidTime -= 1;
 		if (asteroidTime == 0) {
 			asteroid::generateRandomAsteroid(objs, player);
-			asteroidTime = 40;
+			asteroidTime = 100;
 		}
 		// Handle Button Presses
 		if(s.left_Pressed()){
@@ -198,7 +198,7 @@ void SysTick_Handler(void){ // every 50 ms
 		}
 		
 		if(!player->isDestoyed()){	// player gets points for survining
-			score++;
+			score = score + 9;
 		}
 		
 		needToDraw = true;    // Draw objects in main
@@ -219,13 +219,15 @@ int main(void){
 	SysTick_Init(50*MS);
 	while(true){
 		if(needToDraw){
-			//display score
 			needToDraw = false;
 			SSD1306_ClearBuffer();
+			//display score
+			char scoreStr[10];
+			char output[18];
+			Utility::toString(scoreStr, score);
+			Utility::addStrings(output, (char *)"Score : ", scoreStr);
+			SSD1306_DrawString(0,0, output, SSD1306_WHITE);
 			//draw all objects
-			SSD1306_SetCursor(0,0);
-			SSD1306_DrawString(0,0,(char *)"Score : ", SSD1306_WHITE);
-			SSD1306_OutUDec(score);
 			for(uint8_t i = 0; i < objs.len(); i++){
 				objs[i]->draw();
 			}

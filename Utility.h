@@ -15,6 +15,11 @@ class Utility{
 	  static int32_t getSign(int32_t x); // returns the sign of the number: 1, -1, or 0
 	  static int32_t sameSign(int32_t x, int32_t y);
 		static uint32_t sqrt(int32_t value); // returns square root of a value
+		// converts num to a null-terminated string and puts it into str
+		// str must have enough space for at least the number of digits in num + one null terminator
+		static uint8_t toString(char* str, uint32_t num);
+		// adds str2 to str,both must be null-terminated, stores result in result, result must have suffient space for str1 and str2
+		static void addStrings(char* result, char* str, char* str2); 
 };
 
 #endif
