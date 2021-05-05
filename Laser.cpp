@@ -18,6 +18,7 @@ void Laser::instantiate(int16_t x, int16_t y, uint8_t dir){
 	size = LASER_SIZE;
 	deathCounter = LASER_LIFETIME;
 	Trig::setComponents(&vx,&vy, LASER_SPEED, dir);
+	Sound_Start(shoot, 1000);
 }
 
 const uint8_t* Laser::defaultAnimation(){

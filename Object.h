@@ -6,6 +6,7 @@
 #include "trig.h"
 #include "Utility.h"
 #include "vector.h"
+#include "Sound.h"
 
 //Max values for position and velocity, based on SSD1306 display
 #define MAX_X 12700
@@ -37,6 +38,7 @@ class Object {
 		uint8_t YtoPixels(); // returns the pixel value associated with the y_pos
 		const uint8_t* animate();      // returns the next sprite to be drawn 
 		virtual const uint8_t* defaultAnimation(); // returns the default sprite, used when there is no animation
+		virtual void defaultAudio(); // plays default audio of object
 	public:
 		Object(int16_t x, int16_t y, int16_t vx, int16_t vy);
 		void move(); 	// changes the x and y positions according to the velocity, changes velocity accoring to the acceleration
@@ -55,7 +57,7 @@ class Object {
 	  bool isColliding(Object &other); // returns true if this object is colliding with the other object
 		void getCollisions(vector<Object*> &others, vector<Object*> &collisions); //adds all objects in others vector that collide with this object to the collisions vector
 		void setAnimation(const uint8_t **anim, uint8_t fps, uint8_t numFrames);
-		void draw(); // draws the object on the SSD_1306
+		void draw(); // draws the object on the SSD_1306, plays default audio
 };
 
 #endif

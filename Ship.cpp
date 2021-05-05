@@ -19,6 +19,11 @@ const uint8_t *Ship::defaultAnimation(){
 	return shipSpriteList[i];
 }
 
+void Ship::defaultAudio(){
+	if((!Sound_Playing()) && ((Utility::abs(ax) > 0) || (Utility::abs(ay) > 0))) // Play explosion sound if acceleration is not zero
+		Sound_Start(explosion+2000, 25); // Sounds Weird, might change;
+}
+
 int16_t Ship::getType(){
 	return SHIP_TYPE;
 }

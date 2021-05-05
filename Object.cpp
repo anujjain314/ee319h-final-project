@@ -134,12 +134,17 @@ const uint8_t* Object::defaultAnimation(){
 	return NULL;
 }
 
+void Object::defaultAudio(){
+	return;
+}
+
 int16_t Object::getType(){
 	return OBJECT_TYPE;
 }
 
 void Object::draw(){
 	if(!isDestoyed()){ // Only visible if not destroyed
+		defaultAudio();
 		const uint8_t* sprite = animate();
 		SSD1306_DrawBMP(XtoPixels(),YtoPixels(),sprite,0,SSD1306_WHITE);
 	}

@@ -9,7 +9,8 @@
 
 
 class Ship : public Object{
-	virtual const uint8_t* defaultAnimation();
+	virtual const uint8_t* defaultAnimation(); // changes sprite when according to direction
+	virtual void defaultAudio(); // sound of thrusters
 	public:
 		Ship(int16_t x, int16_t y);
 		void fire(Laser &l);

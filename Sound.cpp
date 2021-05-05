@@ -53,6 +53,11 @@ void Sound_Play(){
 	len--;
 }
 
+// return true if a sound is still playing
+bool Sound_Playing(){
+	return len > 0;
+}
+
 //******* Sound_Start ************
 // This function does not output to the DAC. 
 // Rather, it sets a pointer and counter, and then enables the timer interrupt.
