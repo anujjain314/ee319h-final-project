@@ -165,6 +165,7 @@ void SysTick_Init(unsigned long period){
 
 uint32_t time;
 int8_t asteroidTime = 1;
+SlidePot pot(185, 66);
 void SysTick_Handler(void){ // every 50 ms
 		asteroidTime -= 1;
 		if (asteroidTime <= 0 && !objs.isFull()) {
@@ -178,11 +179,16 @@ void SysTick_Handler(void){ // every 50 ms
 		if(s.right_Pressed()){
 			player->turn(20);
 		}
-		if(s.up_Pressed()){
-			player->setAcceleration(20000);
-		} else{
-			player->setAcceleration(0);
-		}
+
+		// Thrust with slidepot
+		int data = ADC_In();
+    pot.Save(data);
+		player->setAcceleration(pot.ADCsample()/2);
+//		if(s.up_Pressed()){
+//			player->setAcceleration(20000);
+//		} else{
+//			player->setAcceleration(0);
+//		}
 		if(s.down_Clicked()){
 			Laser *l = new Laser();
 			if(objs.push_back(l)){
@@ -198,11 +204,11 @@ void SysTick_Handler(void){ // every 50 ms
 		for(uint8_t i = 0; i < objs.len(); i++){
 			objs[i]->move();
 		}
-		
+
 		if(!player->isDestoyed()){	// player gets points for survining
 			score = score + 9;
 		}
-		
+
 		needToDraw = true;    // Draw objects in main
 }
 
@@ -210,6 +216,7 @@ void SysTick_Handler(void){ // every 50 ms
 int main(void){
 	PLL_Init();
 	Sound_Init();
+	ADC_Init(SAC_32);  // turn on ADC, set channel to 5
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
 	menu m(NO_SELECTION, false);
@@ -223,8 +230,14 @@ int main(void){
 			char scoreStr[10];
 			char output[18];
 			Utility::toString(scoreStr, score);
-			Utility::addStrings(output, (char *)"Score : ", scoreStr);
-			SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			if (m.lang() == ENGLISH) {
+				Utility::addStrings(output, (char *)"Score : ", scoreStr);
+				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			}
+			else if (m.lang() == SPANISH) {
+				Utility::addStrings(output, (char *)"Resultado : ", scoreStr);
+				SSD1306_DrawString(0,0, output, SSD1306_WHITE);
+			}
 			//draw all objects
 			for(uint8_t i = 0; i < objs.len(); i++){
 				objs[i]->draw();

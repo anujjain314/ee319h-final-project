@@ -25,11 +25,13 @@ void menu::menuInit() {
 		}
 	}
 	while(!start) {
-		if (language == ENGLISH) {
-			if (s.up_Clicked()) {
-				start = true;
-				SSD1306_OutClear();
-			}
+		if (s.up_Clicked()) {
+			start = true;
+			SSD1306_OutClear();
 		}
 	}
+}
+
+int8_t menu::lang() {
+	return language;
 }

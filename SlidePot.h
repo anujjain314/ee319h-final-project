@@ -9,6 +9,7 @@
 #ifndef SLIDEPOT_H
 #define SLIDEPOT_H
 #include <stdint.h>
+#define SAC_32 5
 
 class SlidePot{ private:
   uint32_t data;     // raw ADC value
@@ -30,7 +31,7 @@ public:
 // ADC initialization function, channel 5, PD2
 // Input: none
 // Output: none
-void ADC_Init(void);
+void ADC_Init(uint32_t sac);
 
 //------------ADC_In------------
 // Busy-wait Analog to digital conversion, channel 5, PD2
