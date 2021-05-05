@@ -35,18 +35,25 @@ void menu::menuInit() {
 void menu::gameOver() {
 	if (language == ENGLISH) {
 		SSD1306_OutClear();
-		SSD1306_OutString("Game Over!");
+		SSD1306_OutString((char*)"Game Over!");
 		SSD1306_SetCursor(0, 1);
-		SSD1306_OutString("Score: ");
+		SSD1306_OutString((char*)"Score: ");
 		SSD1306_OutUDec(finalScore);
+		SSD1306_SetCursor(0, 2);
+		SSD1306_OutString((char*)"Press UP to restart");
 	}
 	else if (language == SPANISH) {
 		SSD1306_OutClear();
-		SSD1306_OutString("Juego Terminado!");
+		SSD1306_OutString((char*)"Juego Terminado!");
 		SSD1306_SetCursor(0, 1);
-		SSD1306_OutString("Resultado: ");
+		SSD1306_OutString((char*)"Resultado: ");
 		SSD1306_OutUDec(finalScore);
+		SSD1306_SetCursor(0, 2);
+		SSD1306_OutString((char*)"Presione hacia ARRIBA");
+		SSD1306_SetCursor(0, 3);
+		SSD1306_OutString((char*)"para reiniciar");
 	}
+	while(!s->up_Clicked()){} // wait till up is clicked
 }
 
 int8_t menu::lang() {

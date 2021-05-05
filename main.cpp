@@ -232,7 +232,9 @@ int main(void){
 	while(true){
 		m.finalScore = score;
 		if (endGame) {
-			break;
+			endGame = false;
+			needRestart = true;
+			m.gameOver();
 		}
 		if(needToDraw){
 			needToDraw = false;
@@ -272,7 +274,7 @@ int main(void){
 		}
 		if(needRestart){
 			DisableInterrupts();
-			needReset = false;
+			needRestart = false;
 			score = 0;
 			for(int8_t i = objs.len() - 1; i >= 0; i--){
 				delete objs[i];
@@ -285,162 +287,9 @@ int main(void){
 			EnableInterrupts();
 		}
 	}
-	m.gameOver();
 }
 
 
-// Test Player Class, Laser Class, Asteroid Class, dont try to understand this spaghetti code, random testing
-int main5(void){ Switch s; Ship player(6000, 3800); vector<Laser*> v(10); vector<asteroid*> v2(10);
-	PLL_Init();
-	SSD1306_Init(SSD1306_SWITCHCAPVCC);
-	v2.push_back(new asteroid(2000,2000, 47, 20, asteroid_small));
-	v2.push_back(new asteroid(4000,2000, 157, 10, asteroid_large));
-	while(true){
-		SSD1306_ClearBuffer();
-		Delay100ms(1);
-		if(s.left_Pressed()){
-			player.turn(-20);
-		}
-		else if(s.right_Pressed()){
-			player.turn(20);
-		}
-		if(s.up_Pressed()){
-			player.setAcceleration(200);
-		} else{
-			player.setAcceleration(0);
-		}
-		if(s.down_Clicked()){
-			if(!v.isFull()){
-				v.push_back(new Laser());
-				player.fire(*v.back());
-			}
-		}
-		for(uint8_t i = 0; i < v.len(); i++){
-
-			for(int j = 0; j < v2.len(); j++){
-				if(v[i]->isColliding(*v2[j])){
-					v2[j]->destroy();
-					v[i]->destroy();
-				}
-			}
-
-			if(v[i]->isDestoyed()){
-				v.remove(i);
-			}
-			v[i]->move();
-			v[i]->draw();
-		}
-
-		for(uint8_t i = 0; i < v2.len(); i++){
-			if(v2[i]->isDestoyed()){
-				v2.remove(i);
-			}
-
-			if(v2[i]->isColliding(player)){
-				player.destroy();
-			}
-
-			v2[i]->move();
-			v2[i]->draw();
-		}
-
-			player.move();
-			player.draw();
-		  SSD1306_OutBuffer();
-	}
-}
-
-// Test Player Class
-int main3(void){ Switch s; Ship player(6000, 3800); Laser l[10];
-	uint8_t numLazers = 0;
-	PLL_Init();
-	SSD1306_Init(SSD1306_SWITCHCAPVCC);
-	while(true){
-		SSD1306_ClearBuffer();
-		Delay100ms(1);
-		if(s.left_Pressed()){
-			player.turn(-20);
-		}
-		else if(s.right_Pressed()){
-			player.turn(20);
-		}
-		if(s.up_Pressed()){
-			player.setAcceleration(200);
-		} else{
-			player.setAcceleration(0);
-		}
-		if(s.down_Pressed()){
-			if(numLazers == 10){
-				numLazers = 0;
-			}
-			numLazers++;
-			player.fire(l[numLazers-1]);
-		}
-		for(uint8_t i = 0; i < numLazers; i++){
-			l[i].move();
-			l[i].draw();
-		}
-			player.move();
-			player.draw();
-		  SSD1306_OutBuffer();
-	}
-}
-
-// Test Switch Class
-int main2(void){uint8_t prev; uint8_t curr; Switch s; uint8_t count;
-	while(true){
-		curr = s.up_Pressed() || s.down_Pressed() || s.left_Pressed() || s.right_Pressed();
-		if(curr != prev)
-			count++;
-		prev = curr;
-	}
-}
-
-
-//int main1(void){uint32_t time=0;
-//  DisableInterrupts();
-//  // pick one of the following three lines, all three set to 80 MHz
-//  //PLL_Init();                   // 1) call to have no TExaS debugging
-//  TExaS_Init(&LogicAnalyzerTask); // 2) call to activate logic analyzer
-//  //TExaS_Init(&ScopeTask);       // or 3) call to activate analog scope PD2
-//  SSD1306_Init(SSD1306_SWITCHCAPVCC);
-//  SSD1306_OutClear();
-//  Random_Init(1);
-//  Profile_Init(); // PB5,PB4,PF3,PF2,PF1
-//  SSD1306_ClearBuffer();
-//  SSD1306_DrawBMP(2, 62, SpaceInvadersMarquee, 0, SSD1306_WHITE);
-//  SSD1306_OutBuffer();
-//  EnableInterrupts();
-//  Delay100ms(20);
-//  SSD1306_ClearBuffer();
-//  SSD1306_DrawBMP(47, 63, PlayerShip0, 0, SSD1306_WHITE); // player ship bottom
-//  SSD1306_DrawBMP(53, 55, Bunker0, 0, SSD1306_WHITE);
-
-//  SSD1306_DrawBMP(0, 9, Alien10pointA, 0, SSD1306_WHITE);
-//  SSD1306_DrawBMP(20,9, Alien10pointB, 0, SSD1306_WHITE);
-//  SSD1306_DrawBMP(40, 9, Alien20pointA, 0, SSD1306_WHITE);
-//  SSD1306_DrawBMP(60, 9, Alien20pointB, 0, SSD1306_WHITE);
-//  SSD1306_DrawBMP(80, 9, Alien30pointA, 0, SSD1306_WHITE);
-//  SSD1306_DrawBMP(50, 19, AlienBossA, 0, SSD1306_WHITE);
-//  SSD1306_OutBuffer();
-//  Delay100ms(30);
-
-//  SSD1306_OutClear();
-//  SSD1306_SetCursor(1, 1);
-//  SSD1306_OutString((char *)"GAME OVER");
-//  SSD1306_SetCursor(1, 2);
-//  SSD1306_OutString((char *)"Nice try,");
-//  SSD1306_SetCursor(1, 3);
-//  SSD1306_OutString((char *)"Earthling!");
-//  SSD1306_SetCursor(2, 4);
-//  while(1){
-//    Delay100ms(10);
-//    SSD1306_SetCursor(19,0);
-//    SSD1306_OutUDec2(time);
-//    time++;
-//    PF1 ^= 0x02;
-//  }
-//}
 
 
 // You can't use this timer, it is here for starter code only
