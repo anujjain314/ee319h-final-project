@@ -29,3 +29,31 @@ bool asteroid::breakDown(vector<Object*> &v) {
 	v.push_back(new asteroid(getX() + ASTEROID_SMALL_SIZE, getY() + halfSize, getDirection(), getVelocity(), asteroid_small));
 	return true;
 }
+
+void asteroid::generateRandomAsteroid(vector<Object*> &v, Ship* player) {
+	Random_Init(NVIC_ST_CURRENT_R);
+	if (Random() < 128) {
+		type = asteroid_small;
+	}
+	else {
+		type = asteroid_large;
+	}
+	
+	int randX = ((Random32()>>24)%128);
+	int randY = ((Random32()>>24)%64);
+	
+	while (Trig::getDistance(x, player->getX(), y, player->getY()) < 7) {
+		randX = ((Random32()>>24)%128);
+		randY = ((Random32()>>24)%64);
+	}
+	
+	x = randX * 100;
+	y = randY * 100;
+	
+	dir = Random();
+	vx = (Random32()>>24)%50;
+	vy = (Random32()>>24)%50;
+	
+	v.push_back(new asteroid(x, y, dir, getVelocity(), type));
+}
+
