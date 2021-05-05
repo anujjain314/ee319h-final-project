@@ -191,7 +191,7 @@ void SysTick_Handler(void){ // every 50 ms
 //		} else{
 //			player->setAcceleration(0);
 //		}
-		if (s.up_Pressed()) {
+		if (s.up_Clicked()) {
 			endGame = true;
 		}
 		if(s.down_Clicked()){
@@ -224,10 +224,11 @@ int main(void){
 	ADC_Init(SAC_32);  // turn on ADC, set channel to 5
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
-	menu m(NO_SELECTION, false);
+	menu m(NO_SELECTION, false, s);
 	m.menuInit();
-	SysTick_Init(50*MS);
+	Delay100ms(1);
 	endGame = false;
+	SysTick_Init(50*MS);
 	while(true){
 		m.finalScore = score;
 		if (endGame) {

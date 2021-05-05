@@ -12,9 +12,10 @@
 class menu {
 	int8_t language;
 	bool start;
+	Switch* s;
 	
 	public:
-		menu(int8_t language, bool start);
+		menu(int8_t language, bool start, Switch& s);
 	  void menuInit();
 		void gameOver();
 		int8_t lang();
