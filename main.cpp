@@ -110,6 +110,7 @@ vector<Object*> objs(20);
 bool needToDraw = false;
 bool needReset = false;
 bool needRestart = false;
+bool endGame = false;
 
 // returns true if one of the objects is either type1 or type2 and the other object is the other type
 bool checkTypes(int16_t type1, int16_t type2, Object* o1, Object* o2){
@@ -190,6 +191,9 @@ void SysTick_Handler(void){ // every 50 ms
 //		} else{
 //			player->setAcceleration(0);
 //		}
+		if (s.up_Pressed()) {
+			endGame = true;
+		}
 		if(s.down_Clicked()){
 			Laser *l = new Laser();
 			if(objs.push_back(l)){
@@ -223,7 +227,12 @@ int main(void){
 	menu m(NO_SELECTION, false);
 	m.menuInit();
 	SysTick_Init(50*MS);
+	endGame = false;
 	while(true){
+		m.finalScore = score;
+		if (endGame) {
+			break;
+		}
 		if(needToDraw){
 			needToDraw = false;
 			SSD1306_ClearBuffer();
@@ -275,6 +284,7 @@ int main(void){
 			EnableInterrupts();
 		}
 	}
+	m.gameOver();
 }
 
 

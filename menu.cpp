@@ -1,6 +1,6 @@
 #include "menu.h"
 
-menu::menu(int language, bool start) {
+menu::menu(int8_t language, bool start) {
 	this->language = NO_SELECTION;
 	this->start = false;
 }
@@ -32,6 +32,25 @@ void menu::menuInit() {
 	}
 }
 
+void menu::gameOver() {
+	if (language == ENGLISH) {
+		SSD1306_OutClear();
+		SSD1306_OutString("Game Over!");
+		SSD1306_SetCursor(0, 1);
+		SSD1306_OutString("Score: ");
+		SSD1306_OutUDec(finalScore);
+	}
+	else if (language == SPANISH) {
+		SSD1306_OutClear();
+		SSD1306_OutString("Juego Terminado!");
+		SSD1306_SetCursor(0, 1);
+		SSD1306_OutString("Resultado: ");
+		SSD1306_OutUDec(finalScore);
+	}
+}
+
 int8_t menu::lang() {
 	return language;
 }
+
+

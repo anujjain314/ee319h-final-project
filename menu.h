@@ -10,12 +10,15 @@
 #define SPANISH 2
 
 class menu {
-	int language;
+	int8_t language;
 	bool start;
+	
 	public:
-		menu(int language, bool start);
+		menu(int8_t language, bool start);
 	  void menuInit();
+		void gameOver();
 		int8_t lang();
+		int32_t finalScore;
 };
 
 #endif
