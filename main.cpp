@@ -157,8 +157,14 @@ void SysTick_Init(unsigned long period){
 }
 
 uint32_t time;
+uint8_t asteroidTime = 1;
 void SysTick_Handler(void){ // every 50 ms
 		uint32_t t = NVIC_ST_CURRENT_R; //debug, remove later
+		asteroidTime -= 1;
+		if (asteroidTime == 0) {
+			asteroid::generateRandomAsteroid(objs, player);
+			asteroidTime = 40;
+		}
 		// Handle Button Presses
 		if(s.left_Pressed()){
 			player->turn(-20);
@@ -195,11 +201,10 @@ void SysTick_Handler(void){ // every 50 ms
 int main(void){
 	PLL_Init();
 	Sound_Init();
-	music.playSong(ode_to_joy, 30);
 	SSD1306_Init(SSD1306_SWITCHCAPVCC);
 	objs.push_back(player);
-	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
-	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
+//	objs.push_back(new asteroid(2000,2000, 47, 2000, asteroid_small));
+//	objs.push_back(new asteroid(4000,2000, 157, 1000, asteroid_large));
 	menu m(NO_SELECTION, false);
 	m.menuInit();
 	SysTick_Init(50*MS);
@@ -214,9 +219,6 @@ int main(void){
 		}
 	}
 }
-
-
-
 
 
 // Test Player Class, Laser Class, Asteroid Class, dont try to understand this spaghetti code, random testing
